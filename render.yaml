@@ -1,16 +1,4 @@
 services:
-  - type: web
-    name: huligan-backend
-    runtime: node
-    rootDir: backend
-    buildCommand: npm install
-    startCommand: node server.js
-    envVars:
-      - key: NODE_VERSION
-        value: 22
-      - key: DATABASE_URL
-        sync: false
-
   - type: static
     name: huligan-frontend
     rootDir: frontend
