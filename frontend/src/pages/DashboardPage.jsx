@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api'
+import { useT } from '../i18n'
 import SettingsModal from '../components/SettingsModal'
 import RunCard from '../components/RunCard'
 import NewRunModal from '../components/NewRunModal'
@@ -11,6 +12,7 @@ export default function DashboardPage() {
   const [runs, setRuns] = useState([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
+  const t = useT()
 
   async function loadRuns({ silent = false } = {}) {
     if (!silent) setLoading(true)
@@ -49,32 +51,32 @@ export default function DashboardPage() {
             onClick={() => setSettingsOpen(true)}
             className="text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
           >
-            Налаштування
+            {t('nav_settings')}
           </button>
           <button
             onClick={handleLogout}
             className="text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
           >
-            Вийти
+            {t('nav_logout')}
           </button>
         </div>
       </header>
 
       <main className="max-w-3xl mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-medium">Тест-рани</h2>
+          <h2 className="text-lg font-medium">{t('runs_title')}</h2>
           <button
             onClick={() => setNewRunOpen(true)}
             className="bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors cursor-pointer"
           >
-            + Новий ран
+            {t('runs_new')}
           </button>
         </div>
 
         {loading ? (
-          <p className="text-gray-500 text-sm">Завантаження...</p>
+          <p className="text-gray-500 text-sm">{t('runs_loading')}</p>
         ) : runs.length === 0 ? (
-          <p className="text-gray-500 text-sm">Ще немає ранів</p>
+          <p className="text-gray-500 text-sm">{t('runs_empty')}</p>
         ) : (
           <div className="flex flex-col gap-3">
             {runs.map(run => <RunCard key={run.id} run={run} />)}

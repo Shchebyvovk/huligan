@@ -1,3 +1,5 @@
+import { useT, useLocale } from '../i18n'
+
 const STATUS_STYLES = {
   running:   'bg-blue-500/20 text-blue-300',
   completed: 'bg-green-500/20 text-green-300',
@@ -6,9 +8,11 @@ const STATUS_STYLES = {
 }
 
 export default function RunCard({ run }) {
+  const t = useT()
+  const { locale } = useLocale()
   const badge = STATUS_STYLES[run.status] ?? STATUS_STYLES.pending
   const scenarioName = run.scenario?.name ?? run.scenario ?? '—'
-  const time = new Date(run.createdAt ?? run.started_at).toLocaleString('uk-UA')
+  const time = new Date(run.createdAt ?? run.started_at).toLocaleString(locale === 'en' ? 'en-GB' : 'uk-UA')
 
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl px-5 py-4 flex items-center justify-between">
@@ -20,7 +24,7 @@ export default function RunCard({ run }) {
           </span>
         </div>
         <div className="text-xs text-gray-500">
-          {run.concurrency} юзерів · {time}
+          {run.concurrency} {t('runs_users')} · {time}
         </div>
       </div>
       <span className="text-xs text-gray-600">#{run.id}</span>

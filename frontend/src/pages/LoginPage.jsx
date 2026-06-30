@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api'
+import { useT } from '../i18n'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -8,6 +9,7 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const t = useT()
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -18,12 +20,12 @@ export default function LoginPage() {
       if (!res) return
       if (!res.ok) {
         const { message } = await res.json()
-        setError(message || 'Невірний email або пароль')
+        setError(message || t('login_error_credentials'))
         return
       }
       navigate('/dashboard')
     } catch {
-      setError('Не вдалося підключитись до сервера')
+      setError(t('login_error_server'))
     } finally {
       setLoading(false)
     }
@@ -33,7 +35,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-950 flex items-center justify-center">
       <div className="w-full max-w-sm">
         <h1 className="text-2xl font-semibold text-white text-center mb-8">
-          Huligan <span className="text-purple-400">Admin</span>
+          {t('login_title')} <span className="text-purple-400">{t('login_subtitle')}</span>
         </h1>
 
         <form
@@ -41,7 +43,7 @@ export default function LoginPage() {
           className="bg-gray-900 border border-gray-800 rounded-xl p-8 flex flex-col gap-4"
         >
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-400" htmlFor="email">Email</label>
+            <label className="text-sm text-gray-400" htmlFor="email">{t('login_email')}</label>
             <input
               id="email"
               type="email"
@@ -54,7 +56,7 @@ export default function LoginPage() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-400" htmlFor="password">Пароль</label>
+            <label className="text-sm text-gray-400" htmlFor="password">{t('login_password')}</label>
             <input
               id="password"
               type="password"
@@ -65,16 +67,14 @@ export default function LoginPage() {
             />
           </div>
 
-          {error && (
-            <p className="text-red-400 text-sm">{error}</p>
-          )}
+          {error && <p className="text-red-400 text-sm">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
             className="mt-2 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white rounded-lg py-2 text-sm font-medium transition-colors cursor-pointer"
           >
-            {loading ? 'Вхід...' : 'Увійти'}
+            {loading ? t('login_submitting') : t('login_submit')}
           </button>
         </form>
       </div>
