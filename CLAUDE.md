@@ -6,14 +6,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Load-testing platform that simulates up to 10 000 real users against a target chat application. Virtual users are coordinated by an Orchestrator, executed by Workers, and monitored via a React Admin Panel.
 
+## Repo structure
+
+```
+backend/    Node.js backend (ESM) — deployed to Render
+frontend/   React admin panel (Vite + Tailwind) — deployed separately
+db/         PostgreSQL migrations
+docs/       Architecture Decision Records (docs/decisions/)
+```
+
 ## Architecture
 
 ```
-Admin Panel (React)
-      │
+Admin Panel (React, frontend/)
+      │  REST API
       ▼
-Orchestrator (API coordinator)
-      │  distributes virtual users
+Orchestrator (backend/) — HTTP server, coordinates load test runs
+      │  distributes virtual users via RabbitMQ
       ▼
 Workers (Node.js / Go)
   - hold WebSocket connections
@@ -32,31 +41,52 @@ Workers (Node.js / Go)
 
 ## Current implementation state
 
-Only `src/settings/mergeSettings.js` is implemented. Next modules by priority:
-1. `scanThemes` / `scanLocales` — read available themes and locales from the filesystem
-2. `hashPassword` / `verifyPassword` — local auth (email + password)
-3. `createSession` / `validateSession` — server-side sessions
+**Backend** (`backend/src/`):
+- `settings/mergeSettings.js` — merges user settings over defaults
+- `settings/scanThemes.js`, `settings/scanLocales.js` — scan themes/locales from filesystem
+- `auth/hashPassword.js` — `hashPassword` / `verifyPassword` via `node:crypto` scrypt
+- `auth/session.js` — `createSession` / `validateSession` with db-adapter DI
+- `scenario/parseScenario.js` — validates and parses DSL JSON scenarios
+- `worker/runScenario.js` — executes scenario steps sequentially via client adapter
+- `orchestrator/orchestrate.js` — distributes users across workers with concurrency limit
 
-## Code
+**Frontend** (`frontend/src/`):
+- `pages/LoginPage.jsx` — email + password login form
+- `pages/DashboardPage.jsx` — test run list, start new run
+- `components/RunCard.jsx` — single run status card
+- `components/SettingsModal.jsx` — theme + locale selectors
+- `components/NewRunModal.jsx` — scenario + concurrency picker
 
-ESM-only Node.js (`"type": "module"`). All source lives under `src/`, organized by feature domain. Tests sit in `__tests__/` subdirectories next to the modules they cover.
+**DB** (`backend/db/migrations/`):
+- `001_initial_schema.sql` — all 7 tables
 
-**Development discipline:** TDD — write the test first, then the minimal implementation. Conventional Commits are mandatory (semantic-release uses them for versioning).
-
-### `src/settings/mergeSettings.js`
-
-Merges user settings over a defaults object. Only keys present in `defaults` are accepted — unknown keys are silently dropped to guard against stale or malicious data from the DB.
+**Next:** HTTP API (Orchestrator server), real PostgreSQL db adapter, connect frontend to real API.
 
 ## Commands
 
 ```bash
+# Backend
+cd backend
 npm test                  # run all tests (vitest run)
-npx vitest run <pattern>  # run a single test file, e.g. npx vitest run mergeSettings
+npx vitest run <pattern>  # run a single test file
+
+# Frontend
+cd frontend
+npm run dev               # dev server
+npm run build             # production build
 ```
+
+## Backend code conventions
+
+ESM-only (`"type": "module"`). Source under `backend/src/`, organized by domain. Tests in `__tests__/` next to modules.
+
+**Development discipline:** TDD — write the test first, then the minimal implementation. Conventional Commits are mandatory (semantic-release uses them for versioning).
+
+**DB adapter pattern:** functions that need DB access accept a `db` object (dependency injection) rather than importing a connection directly. This keeps unit tests free of real DB calls.
 
 ## Releases
 
-Automated via **semantic-release** (config: `.releaserc.json`). On every push to `main` the `release` CI job runs after tests and bumps `package.json`, appends to `CHANGELOG.md`, and creates a GitHub Release.
+Automated via **semantic-release** (config: `backend/.releaserc.json`). CI runs from `backend/` working directory. On push to `main`: bumps `package.json`, appends `CHANGELOG.md`, creates GitHub Release.
 
 Prefix mapping: `fix:` → patch, `feat:` → minor, `BREAKING CHANGE` → major. `docs:`, `chore:`, `test:` do not trigger a release.
 
