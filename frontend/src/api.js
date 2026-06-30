@@ -19,6 +19,11 @@ export const api = {
   logout:        ()                => request('POST', '/api/auth/logout'),
   getRuns:       ()                => request('GET',  '/api/runs').then(r => r?.json() ?? []),
   createRun:     (data)            => request('POST', '/api/runs', data).then(r => r?.json()),
+  getUsers:       (params = {})    => {
+    const q = new URLSearchParams({ page: 1, limit: 50, ...params }).toString()
+    return request('GET', `/api/users?${q}`).then(r => r?.json())
+  },
+  getUserApps:    ()               => request('GET', '/api/users/apps').then(r => r?.json() ?? []),
   getUsersStats:  (targetUrl)      => request('GET', `/api/users/stats?targetUrl=${encodeURIComponent(targetUrl)}`).then(r => r?.json()),
   generateUsers:  (count)          => request('POST', '/api/users/generate', { count }),
   getScenarios:   ()               => request('GET',  '/api/scenarios').then(r => r?.json() ?? []),

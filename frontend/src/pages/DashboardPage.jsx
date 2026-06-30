@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import { useT } from '../i18n'
+import AppHeader from '../components/AppHeader'
 import SettingsModal from '../components/SettingsModal'
 import RunCard from '../components/RunCard'
 import NewRunModal from '../components/NewRunModal'
@@ -11,7 +11,6 @@ export default function DashboardPage() {
   const [newRunOpen, setNewRunOpen] = useState(false)
   const [runs, setRuns] = useState([])
   const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
   const t = useT()
 
   async function loadRuns({ silent = false } = {}) {
@@ -30,11 +29,6 @@ export default function DashboardPage() {
     return () => clearInterval(id)
   }, [runs])
 
-  async function handleLogout() {
-    await api.logout()
-    navigate('/login')
-  }
-
   function handleRunCreated() {
     setNewRunOpen(false)
     loadRuns()
@@ -42,25 +36,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[var(--c-bg)] text-[var(--c-text)]">
-      <header className="border-b border-[var(--c-border)] px-6 py-4 flex items-center justify-between bg-[var(--c-surface)]">
-        <span className="font-semibold text-lg">
-          Huligan <span className="text-[var(--c-accent)]">Admin</span>
-        </span>
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setSettingsOpen(true)}
-            className="text-sm text-[var(--c-text-3)] hover:text-[var(--c-text)] transition-colors cursor-pointer"
-          >
-            {t('nav_settings')}
-          </button>
-          <button
-            onClick={handleLogout}
-            className="text-sm text-[var(--c-text-3)] hover:text-[var(--c-text)] transition-colors cursor-pointer"
-          >
-            {t('nav_logout')}
-          </button>
-        </div>
-      </header>
+      <AppHeader onSettings={() => setSettingsOpen(true)} />
 
       <main className="max-w-3xl mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">

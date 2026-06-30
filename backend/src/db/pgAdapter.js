@@ -45,6 +45,41 @@ export function createPgAdapter(pool) {
       );
     },
 
+    async getUsers({ registeredIn, page = 1, limit = 50 }) {
+      const offset = (page - 1) * limit
+      const params = [limit, offset]
+      let where = ''
+      if (registeredIn === '__fresh__') {
+        where = 'WHERE registered_in = \'[]\'::jsonb'
+      } else if (registeredIn) {
+        where = `WHERE registered_in @> $3::jsonb`
+        params.push(JSON.stringify([registeredIn]))
+      }
+      const { rows } = await pool.query(
+        `SELECT id, first_name AS "firstName", last_name AS "lastName",
+                email, phone, address, registered_in AS "registeredIn", created_at AS "createdAt"
+         FROM test_users ${where}
+         ORDER BY created_at DESC
+         LIMIT $1 OFFSET $2`,
+        params
+      )
+      const { rows: countRows } = await pool.query(
+        `SELECT COUNT(*)::int AS total FROM test_users ${where}`,
+        registeredIn ? params.slice(2) : []
+      )
+      return { users: rows, total: countRows[0].total, page, limit }
+    },
+
+    async getUserApps() {
+      const { rows } = await pool.query(
+        `SELECT DISTINCT jsonb_array_elements_text(registered_in) AS app
+         FROM test_users
+         WHERE registered_in != '[]'::jsonb
+         ORDER BY app`
+      )
+      return rows.map(r => r.app)
+    },
+
     async getUsersStats(targetUrl) {
       const { rows } = await pool.query(
         `SELECT

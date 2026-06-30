@@ -13,7 +13,27 @@ export default {
 
   // Dashboard
   nav_settings: 'Налаштування',
+  nav_runs: 'Тест-рани',
+  nav_users: 'Юзери',
   nav_logout: 'Вийти',
+
+  // Users page
+  users_title: 'Пул юзерів',
+  users_total: (n) => `Всього: ${n}`,
+  users_generate: 'Згенерувати',
+  users_generating: 'Генерація...',
+  users_generated: (n) => `Згенеровано ${n} юзерів`,
+  users_generate_error: 'Помилка генерації',
+  users_filter_label: 'Фільтр:',
+  users_filter_all: 'Всі',
+  users_filter_fresh: 'Вільні',
+  users_col_name: "Ім'я",
+  users_col_email: 'Email',
+  users_col_phone: 'Телефон',
+  users_col_registered: 'Зареєстрований в',
+  users_fresh: 'вільний',
+  users_empty: 'Юзерів немає',
+  users_page: (p, t) => `Сторінка ${p} з ${t}`,
   runs_title: 'Тест-рани',
   runs_new: '+ Новий ран',
   runs_loading: 'Завантаження...',

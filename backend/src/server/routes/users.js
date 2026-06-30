@@ -1,6 +1,17 @@
 import { generateUsers } from '../../users/generateUsers.js'
 
 export async function usersRoutes(app, { db }) {
+  app.get('/users', async (req, reply) => {
+    const { registeredIn, page = 1, limit = 50 } = req.query
+    const result = await db.getUsers({ registeredIn, page: Number(page), limit: Number(limit) })
+    reply.send(result)
+  })
+
+  app.get('/users/apps', async (req, reply) => {
+    const apps = await db.getUserApps()
+    reply.send(apps)
+  })
+
   app.get('/users/stats', async (req, reply) => {
     const { targetUrl } = req.query
     if (!targetUrl) return reply.code(400).send({ message: 'targetUrl обов\'язковий' })

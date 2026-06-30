@@ -13,7 +13,27 @@ export default {
 
   // Dashboard
   nav_settings: 'Settings',
+  nav_runs: 'Test runs',
+  nav_users: 'Users',
   nav_logout: 'Sign out',
+
+  // Users page
+  users_title: 'User pool',
+  users_total: (n) => `Total: ${n}`,
+  users_generate: 'Generate',
+  users_generating: 'Generating...',
+  users_generated: (n) => `Generated ${n} users`,
+  users_generate_error: 'Generation failed',
+  users_filter_label: 'Filter:',
+  users_filter_all: 'All',
+  users_filter_fresh: 'Fresh',
+  users_col_name: 'Name',
+  users_col_email: 'Email',
+  users_col_phone: 'Phone',
+  users_col_registered: 'Registered in',
+  users_fresh: 'fresh',
+  users_empty: 'No users yet',
+  users_page: (p, t) => `Page ${p} of ${t}`,
   runs_title: 'Test runs',
   runs_new: '+ New run',
   runs_loading: 'Loading...',
