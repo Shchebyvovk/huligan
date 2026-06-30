@@ -1,3 +1,10 @@
+## [1.13.1](https://github.com/Shchebyvovk/huligan/compare/v1.13.0...v1.13.1) (2026-06-30)
+
+
+### Bug Fixes
+
+* **frontend:** select + кнопка видалити, inline підтвердження, перевірка res.ok ([db56620](https://github.com/Shchebyvovk/huligan/commit/db5662083fcd45a8c4af7e22da94d8332d3b639c))
+
 # [1.13.0](https://github.com/Shchebyvovk/huligan/compare/v1.12.0...v1.13.0) (2026-06-30)
 
 
