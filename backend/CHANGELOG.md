@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/Shchebyvovk/huligan/compare/v1.15.0...v1.16.0) (2026-06-30)
+
+
+### Features
+
+* **i18n:** динамічний список мов через import.meta.glob ([b8fe480](https://github.com/Shchebyvovk/huligan/commit/b8fe480135fab0cf744a6c361453f688a7012c94))
+
 # [1.15.0](https://github.com/Shchebyvovk/huligan/compare/v1.14.0...v1.15.0) (2026-06-30)
 
 
