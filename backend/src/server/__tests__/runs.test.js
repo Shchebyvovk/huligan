@@ -18,11 +18,12 @@ const makeDb = () => {
     async findSession(token) { return sessions[token] ?? null; },
     async deleteSession(token) { delete sessions[token]; },
     async getRuns() { return runs; },
-    async createRun({ scenario, concurrency }) {
-      const run = { id: runs.length + 1, scenario, concurrency, status: "pending" };
+    async createRun({ scenario, concurrency, targetUrl }) {
+      const run = { id: runs.length + 1, scenario, concurrency, targetUrl, status: "pending" };
       runs.unshift(run);
       return run;
     },
+    async updateRunStatus() {},
   };
 };
 
@@ -55,7 +56,7 @@ describe("POST /api/runs", () => {
     const res = await app.inject({
       method: "POST", url: "/api/runs",
       headers: { cookie },
-      payload: { scenario: "chat-flood", concurrency: 500 },
+      payload: { scenario: "chat-flood", concurrency: 500, targetUrl: "https://target.example.com" },
     });
     const body = res.json();
     expect(res.statusCode).toBe(201);
@@ -71,7 +72,19 @@ describe("POST /api/runs", () => {
     const res = await app.inject({
       method: "POST", url: "/api/runs",
       headers: { cookie },
-      payload: { scenario: "chat-flood" },
+      payload: { scenario: "chat-flood", targetUrl: "https://t.com" },
+    });
+    expect(res.statusCode).toBe(400);
+  });
+
+  it("повертає 400 якщо targetUrl відсутній", async () => {
+    const app = buildApp({ db: makeDb(), startRun: async () => {} });
+    const cookie = await loginAndGetCookie(app);
+
+    const res = await app.inject({
+      method: "POST", url: "/api/runs",
+      headers: { cookie },
+      payload: { scenario: "chat-flood", concurrency: 100 },
     });
     expect(res.statusCode).toBe(400);
   });

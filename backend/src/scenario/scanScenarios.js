@@ -16,7 +16,8 @@ export async function scanScenarios(dir) {
           readFile(path, "utf-8"),
           stat(path),
         ]);
-        return { name: f.slice(0, -5), steps: parseScenario(JSON.parse(raw)), mtimeMs };
+        const parsed = parseScenario(JSON.parse(raw));
+        return { name: f.slice(0, -5), steps: parsed.steps, users: parsed.users, mtimeMs };
       } catch {
         return null;
       }
@@ -27,5 +28,5 @@ export async function scanScenarios(dir) {
     .filter(Boolean)
     .sort((a, b) => b.mtimeMs - a.mtimeMs)
     .slice(0, MAX_SCENARIOS)
-    .map(({ name, steps }) => ({ name, steps }));
+    .map(({ name, steps, users }) => users ? { name, steps, users } : { name, steps });
 }

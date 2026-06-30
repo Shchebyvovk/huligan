@@ -37,16 +37,21 @@ function aggregateResults(allResults) {
 }
 
 export async function runJob({ run, db, makeClient, steps, maxParallel = 200 }) {
-  const _steps = steps ?? run.scenario?.steps ?? []
+  const scenario = run.scenario ?? {}
+  const _steps = steps ?? scenario.steps ?? []
+  const users = scenario.users ?? null
   const _makeClient = makeClient ?? (() => makeHttpClient(run.targetUrl))
 
   await db.updateRunStatus(run.id, "running")
 
-  const users = Array.from({ length: run.concurrency }, (_, i) => i)
+  const allUsers = Array.from({ length: run.concurrency }, (_, i) => i)
   const allResults = await orchestrate({
-    users,
+    users: allUsers,
     concurrency: Math.min(run.concurrency, maxParallel),
-    worker: userIndex => runScenario(_steps, _makeClient(userIndex)),
+    worker: userIndex => {
+      const user = users ? users[userIndex % users.length] : undefined
+      return runScenario(_steps, _makeClient(userIndex), user)
+    },
   })
 
   const results = aggregateResults(allResults)

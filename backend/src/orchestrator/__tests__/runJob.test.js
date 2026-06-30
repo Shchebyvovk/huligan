@@ -8,10 +8,10 @@ const makeDb = () => ({
 });
 
 const okClient = () => ({
-  login: vi.fn().mockResolvedValue(undefined),
-  sendMessage: vi.fn().mockResolvedValue(undefined),
-  wait: vi.fn().mockResolvedValue(undefined),
-  logout: vi.fn().mockResolvedValue(undefined),
+  login: vi.fn().mockResolvedValue(50),
+  sendMessage: vi.fn().mockResolvedValue(30),
+  wait: vi.fn().mockResolvedValue(0),
+  logout: vi.fn().mockResolvedValue(10),
 });
 
 describe("runJob", () => {
@@ -20,7 +20,9 @@ describe("runJob", () => {
     await runJob({ run: { id: 1, concurrency: 3 }, db, makeClient: okClient, steps: STEPS });
 
     expect(db.updateRunStatus).toHaveBeenNthCalledWith(1, 1, "running");
-    expect(db.updateRunStatus).toHaveBeenNthCalledWith(2, 1, "completed");
+    expect(db.updateRunStatus).toHaveBeenNthCalledWith(2, 1, "completed", expect.objectContaining({
+      total: 3, passed: 3, failed: 0,
+    }));
   });
 
   it("переводить ран у failed якщо хоч один воркер впав", async () => {
@@ -35,7 +37,9 @@ describe("runJob", () => {
 
     await runJob({ run: { id: 1, concurrency: 3 }, db, makeClient: flakyClient, steps: STEPS });
 
-    expect(db.updateRunStatus).toHaveBeenNthCalledWith(2, 1, "failed");
+    expect(db.updateRunStatus).toHaveBeenNthCalledWith(2, 1, "failed", expect.objectContaining({
+      failed: 1,
+    }));
   });
 
   it("обмежує паралелізм maxParallel", async () => {
@@ -46,11 +50,11 @@ describe("runJob", () => {
       login: vi.fn().mockImplementation(() => new Promise(res => {
         active++;
         maxActive = Math.max(maxActive, active);
-        setTimeout(() => { active--; res(); }, 5);
+        setTimeout(() => { active--; res(10); }, 5);
       })),
-      sendMessage: vi.fn().mockResolvedValue(undefined),
-      wait: vi.fn().mockResolvedValue(undefined),
-      logout: vi.fn().mockResolvedValue(undefined),
+      sendMessage: vi.fn().mockResolvedValue(10),
+      wait: vi.fn().mockResolvedValue(0),
+      logout: vi.fn().mockResolvedValue(10),
     });
 
     await runJob({ run: { id: 1, concurrency: 10 }, db, makeClient: client, steps: STEPS, maxParallel: 2 });

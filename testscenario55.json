@@ -1,0 +1,8 @@
+[
+  { "action": "login", "payload": { "email": "user@example.com", "password": "secret" } },
+  { "action": "send_message", "payload": { "text": "привіт!" } },
+  { "action": "wait", "payload": { "ms": 500 } },
+  { "action": "send_message", "payload": { "text": "ще одне повідомлення" } },
+  { "action": "wait", "payload": { "ms": 1000 } },
+  { "action": "logout" }
+]

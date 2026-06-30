@@ -75,13 +75,24 @@ describe("getRuns", () => {
 });
 
 describe("updateRunStatus", () => {
-  it("оновлює статус рану", async () => {
+  it("оновлює статус рану без results", async () => {
     const pool = makePool([]);
     const db = createPgAdapter(pool);
     await db.updateRunStatus(1, "running");
     expect(pool.query).toHaveBeenCalledWith(
       expect.stringContaining("test_runs"),
-      [1, "running"]
+      [1, "running", null]
+    );
+  });
+
+  it("оновлює статус рану з results", async () => {
+    const pool = makePool([]);
+    const db = createPgAdapter(pool);
+    const results = { total: 10, passed: 9, failed: 1, steps: {} };
+    await db.updateRunStatus(1, "completed", results);
+    expect(pool.query).toHaveBeenCalledWith(
+      expect.stringContaining("test_runs"),
+      [1, "completed", JSON.stringify(results)]
     );
   });
 });
@@ -91,10 +102,10 @@ describe("createRun", () => {
     const run = { id: 1, scenario: { steps: [] }, concurrency: 10, status: "pending" };
     const pool = makePool([run]);
     const db = createPgAdapter(pool);
-    const result = await db.createRun({ scenario: { steps: [] }, concurrency: 10 });
+    const result = await db.createRun({ scenario: { steps: [] }, concurrency: 10, targetUrl: 'https://t.com' });
     expect(pool.query).toHaveBeenCalledWith(
       expect.stringContaining("test_runs"),
-      [{ steps: [] }, 10, "pending"]
+      [{ steps: [] }, 10, 'https://t.com', "pending"]
     );
     expect(result).toEqual(run);
   });
