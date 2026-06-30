@@ -1,3 +1,12 @@
+# [1.4.0](https://github.com/Shchebyvovk/huligan/compare/v1.3.0...v1.4.0) (2026-06-30)
+
+
+### Features
+
+* **db:** початкова схема PostgreSQL — 7 таблиць ([9dc1161](https://github.com/Shchebyvovk/huligan/commit/9dc1161c380f2d085f6f3a065ff807aed4116a17))
+* **scenario:** parseScenario — валідація DSL сценаріїв ([1a3a251](https://github.com/Shchebyvovk/huligan/commit/1a3a25194682b16bd46687415ba8fbc52804a936))
+* **worker:** runScenario — послідовне виконання DSL кроків ([e4f14f3](https://github.com/Shchebyvovk/huligan/commit/e4f14f390927f0eb7f37e3838cde9f280a914e22))
+
 # [1.3.0](https://github.com/Shchebyvovk/huligan/compare/v1.2.0...v1.3.0) (2026-06-30)
 
 
