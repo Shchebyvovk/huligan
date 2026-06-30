@@ -29,7 +29,7 @@ export function createPgAdapter(pool) {
 
     async getRuns() {
       const { rows } = await pool.query(
-        `SELECT id, scenario, concurrency, status, created_at AS "createdAt"
+        `SELECT id, scenario, concurrency, target_url AS "targetUrl", status, created_at AS "createdAt"
          FROM test_runs ORDER BY created_at DESC`
       );
       return rows;
@@ -45,12 +45,12 @@ export function createPgAdapter(pool) {
       );
     },
 
-    async createRun({ scenario, concurrency }) {
+    async createRun({ scenario, concurrency, targetUrl }) {
       const { rows } = await pool.query(
-        `INSERT INTO test_runs (scenario, concurrency, status)
-         VALUES ($1, $2, $3)
-         RETURNING id, scenario, concurrency, status, created_at AS "createdAt"`,
-        [scenario, concurrency, "pending"]
+        `INSERT INTO test_runs (scenario, concurrency, target_url, status)
+         VALUES ($1, $2, $3, $4)
+         RETURNING id, scenario, concurrency, target_url AS "targetUrl", status, created_at AS "createdAt"`,
+        [scenario, concurrency, targetUrl, "pending"]
       );
       return rows[0];
     },

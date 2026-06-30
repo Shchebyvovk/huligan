@@ -43,6 +43,8 @@ export default {
   new_run_start: 'Запустити',
   new_run_starting: 'Запуск...',
   new_run_error_scenario: 'Оберіть сценарій',
+  new_run_target_url: 'Target URL',
+  new_run_error_target_url: 'Вкажіть URL цільового сервера',
   new_run_error_run: 'Не вдалося створити ран',
   new_run_error_delete: 'Не вдалося видалити сценарій',
   new_run_error_file: 'Файл має бути валідним JSON-сценарієм',

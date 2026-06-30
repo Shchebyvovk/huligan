@@ -43,6 +43,8 @@ export default {
   new_run_start: 'Start',
   new_run_starting: 'Starting...',
   new_run_error_scenario: 'Select a scenario',
+  new_run_target_url: 'Target URL',
+  new_run_error_target_url: 'Enter the target server URL',
   new_run_error_run: 'Failed to create run',
   new_run_error_delete: 'Failed to delete scenario',
   new_run_error_file: 'File must be a valid JSON scenario',

@@ -8,6 +8,7 @@ export default function NewRunModal({ onClose }) {
   const [scenarios, setScenarios] = useState([])
   const [scenarioName, setScenarioName] = useState('')
   const [concurrency, setConcurrency] = useState(100)
+  const [targetUrl, setTargetUrl] = useState(() => localStorage.getItem('huligan_target_url') ?? '')
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
@@ -80,11 +81,13 @@ export default function NewRunModal({ onClose }) {
   async function handleStart() {
     const scenario = scenarios.find(s => s.name === scenarioName)
     if (!scenario) { setError(t('new_run_error_scenario')); return }
+    if (!targetUrl.trim()) { setError(t('new_run_error_target_url')); return }
 
+    localStorage.setItem('huligan_target_url', targetUrl.trim())
     setLoading(true)
     setError('')
     try {
-      const run = await api.createRun({ scenario, concurrency: Number(concurrency) })
+      const run = await api.createRun({ scenario, concurrency: Number(concurrency), targetUrl: targetUrl.trim() })
       if (run) onClose()
     } catch {
       setError(t('new_run_error_run'))
@@ -156,6 +159,17 @@ export default function NewRunModal({ onClose }) {
               </button>
             </div>
             <input ref={fileInputRef} type="file" accept="application/json" onChange={handleFileUpload} className="hidden" />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-[var(--c-text-3)]">{t('new_run_target_url')}</label>
+            <input
+              type="url"
+              value={targetUrl}
+              onChange={e => setTargetUrl(e.target.value)}
+              placeholder="https://chat.example.com"
+              className="bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-3 py-2 text-[var(--c-text)] text-sm outline-none focus:border-[var(--c-accent-border)] transition-colors placeholder:text-[var(--c-text-4)]"
+            />
           </div>
 
           <div className="flex flex-col gap-1">

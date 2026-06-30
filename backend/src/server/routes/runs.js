@@ -7,12 +7,12 @@ export async function runsRoutes(app, { db, startRun = runJob }) {
   });
 
   app.post("/runs", async (req, reply) => {
-    const { scenario, concurrency } = req.body ?? {};
-    if (!scenario || concurrency == null) {
-      return reply.code(400).send({ message: "scenario і concurrency обов'язкові" });
+    const { scenario, concurrency, targetUrl } = req.body ?? {};
+    if (!scenario || concurrency == null || !targetUrl) {
+      return reply.code(400).send({ message: "scenario, concurrency і targetUrl обов'язкові" });
     }
-    const run = await db.createRun({ scenario, concurrency });
+    const run = await db.createRun({ scenario, concurrency, targetUrl });
     reply.code(201).send(run);
-    startRun({ run, db, steps: scenario.steps }).catch(err => app.log.error(err));
+    startRun({ run, db }).catch(err => app.log.error(err));
   });
 }
