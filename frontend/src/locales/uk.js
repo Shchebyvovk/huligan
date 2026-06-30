@@ -1,3 +1,5 @@
+export const name = 'Українська'
+
 export default {
   // Login
   login_title: 'Huligan',

@@ -1,3 +1,5 @@
+export const name = 'English'
+
 export default {
   // Login
   login_title: 'Huligan',
