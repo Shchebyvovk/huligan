@@ -8,6 +8,7 @@ export default function NewRunModal({ onClose }) {
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
+  const [confirmDelete, setConfirmDelete] = useState(null)
   const fileInputRef = useRef(null)
 
   useEffect(() => {
@@ -29,13 +30,13 @@ export default function NewRunModal({ onClose }) {
       const steps = JSON.parse(text)
       const name = file.name.replace(/\.json$/, '')
       const res = await api.createScenario({ name, steps })
-      if (!res.ok) {
-        const { message } = await res.json()
-        setError(message || 'Невалідний файл сценарію')
+      if (!res || !res.ok) {
+        const body = await res?.json()
+        setError(body?.message || 'Невалідний файл сценарію')
         return
       }
       const saved = await res.json()
-      setScenarios(list => [...list.filter(s => s.name !== saved.name), saved])
+      setScenarios(list => [...list.filter(s => s.name !== saved.name), saved].slice(0, 10))
       setScenarioName(saved.name)
     } catch {
       setError('Файл має бути валідним JSON-сценарієм')
@@ -44,11 +45,15 @@ export default function NewRunModal({ onClose }) {
     }
   }
 
-  async function handleDelete(name, e) {
-    e.stopPropagation()
+  async function handleDelete(name) {
     setError('')
     try {
-      await api.deleteScenario(name)
+      const res = await api.deleteScenario(name)
+      if (!res || !res.ok) {
+        const body = await res?.json().catch(() => null)
+        setError(body?.message || 'Не вдалося видалити сценарій')
+        return
+      }
       setScenarios(list => {
         const next = list.filter(s => s.name !== name)
         if (scenarioName === name) setScenarioName(next[0]?.name ?? '')
@@ -56,6 +61,8 @@ export default function NewRunModal({ onClose }) {
       })
     } catch {
       setError('Не вдалося видалити сценарій')
+    } finally {
+      setConfirmDelete(null)
     }
   }
 
@@ -97,40 +104,42 @@ export default function NewRunModal({ onClose }) {
               Сценарій
               <span className="text-gray-600 ml-2">(останні 10)</span>
             </label>
-            {scenarios.length === 0 ? (
-              <p className="text-sm text-gray-500 px-1 py-1">Немає завантажених сценаріїв</p>
-            ) : (
-              <div className="flex flex-col gap-1 max-h-40 overflow-y-auto">
-                {scenarios.map(s => (
-                  <label
-                    key={s.name}
-                    className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg border text-sm cursor-pointer transition-colors ${
-                      scenarioName === s.name
-                        ? 'bg-purple-600/20 border-purple-500 text-white'
-                        : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-600'
-                    }`}
-                  >
-                    <span className="flex items-center gap-2 truncate">
-                      <input
-                        type="radio"
-                        name="scenario"
-                        value={s.name}
-                        checked={scenarioName === s.name}
-                        onChange={() => setScenarioName(s.name)}
-                        className="cursor-pointer"
-                      />
-                      <span className="truncate">{s.name}</span>
-                    </span>
-                    <button
-                      type="button"
-                      onClick={e => handleDelete(s.name, e)}
-                      className="text-gray-500 hover:text-red-400 transition-colors text-xs cursor-pointer shrink-0"
-                      title="Видалити сценарій"
-                    >
-                      Видалити
-                    </button>
-                  </label>
-                ))}
+            <div className="flex gap-2">
+              <select
+                value={scenarioName}
+                onChange={e => setScenarioName(e.target.value)}
+                disabled={scenarios.length === 0}
+                className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-purple-500 transition-colors disabled:opacity-50"
+              >
+                {scenarios.length === 0 && <option value="">Немає сценаріїв</option>}
+                {scenarios.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
+              </select>
+              {scenarioName && (
+                <button
+                  type="button"
+                  onClick={() => setConfirmDelete(scenarioName)}
+                  className="text-sm text-gray-500 hover:text-red-400 transition-colors px-2 cursor-pointer"
+                >
+                  Видалити
+                </button>
+              )}
+            </div>
+
+            {confirmDelete && (
+              <div className="mt-1 flex items-center gap-3 text-sm bg-gray-800 rounded-lg px-3 py-2">
+                <span className="text-gray-300 flex-1">Видалити «{confirmDelete}»?</span>
+                <button
+                  onClick={() => handleDelete(confirmDelete)}
+                  className="text-red-400 hover:text-red-300 cursor-pointer font-medium"
+                >
+                  Так
+                </button>
+                <button
+                  onClick={() => setConfirmDelete(null)}
+                  className="text-gray-400 hover:text-white cursor-pointer"
+                >
+                  Ні
+                </button>
               </div>
             )}
           </div>
