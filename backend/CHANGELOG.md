@@ -1,3 +1,10 @@
+# [1.17.0](https://github.com/Shchebyvovk/huligan/compare/v1.16.0...v1.17.0) (2026-06-30)
+
+
+### Features
+
+* **frontend:** add CSS-variable theme system with 3 themes ([01c0d41](https://github.com/Shchebyvovk/huligan/commit/01c0d410437a3afdf4213d48bde2e44e93c93146))
+
 # [1.16.0](https://github.com/Shchebyvovk/huligan/compare/v1.15.0...v1.16.0) (2026-06-30)
 
 
