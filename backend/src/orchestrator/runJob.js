@@ -39,8 +39,19 @@ function aggregateResults(allResults) {
 export async function runJob({ run, db, makeClient, steps, maxParallel = 200 }) {
   const scenario = run.scenario ?? {}
   const _steps = steps ?? scenario.steps ?? []
-  const users = scenario.users ?? null
   const _makeClient = makeClient ?? (() => makeHttpClient(run.targetUrl))
+
+  // Підбираємо пул юзерів з БД якщо вказано usersCount
+  let userPool = scenario.users ?? null
+  let pickedUserIds = []
+
+  if (run.usersCount && db.pickUsers) {
+    const picked = await db.pickUsers({ count: run.usersCount, targetUrl: run.targetUrl })
+    if (picked.length > 0) {
+      userPool = picked
+      pickedUserIds = picked.map(u => u.id)
+    }
+  }
 
   await db.updateRunStatus(run.id, "running")
 
@@ -49,7 +60,7 @@ export async function runJob({ run, db, makeClient, steps, maxParallel = 200 }) 
     users: allUsers,
     concurrency: Math.min(run.concurrency, maxParallel),
     worker: userIndex => {
-      const user = users ? users[userIndex % users.length] : undefined
+      const user = userPool ? userPool[userIndex % userPool.length] : undefined
       return runScenario(_steps, _makeClient(userIndex), user)
     },
   })
@@ -57,4 +68,9 @@ export async function runJob({ run, db, makeClient, steps, maxParallel = 200 }) 
   const results = aggregateResults(allResults)
   const failed = results.failed > 0
   await db.updateRunStatus(run.id, failed ? "failed" : "completed", results)
+
+  // Позначаємо юзерів як зареєстрованих у цьому додатку
+  if (pickedUserIds.length > 0 && db.markUsersRegistered) {
+    await db.markUsersRegistered(pickedUserIds, run.targetUrl).catch(() => {})
+  }
 }

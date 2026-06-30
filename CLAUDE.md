@@ -90,6 +90,13 @@ Automated via **semantic-release** (config: `backend/.releaserc.json`). CI runs 
 
 Prefix mapping: `fix:` → patch, `feat:` → minor, `BREAKING CHANGE` → major. `docs:`, `chore:`, `test:` do not trigger a release.
 
+## TODO
+
+- **`register` scenario step** — add `register` action to DSL (alongside `login`). After a successful `register` step, mark the user as registered in the target app (add targetUrl to `registered_in` in `test_users`). Currently only `login` exists; `register` deferred until the user pool feature is stable.
+- **Live run progress** — show real-time progress bar while run is `running` (poll GET /api/runs/:id every second)
+- **Latency chart** — visualize per-step latency after run completes (SVG, no external libs)
+- **Persistent scenario storage** — uploaded scenarios lost on Render redeploy; consider S3 or Neon blob
+
 ## Architecture Decision Records
 
 Significant decisions are documented in `docs/decisions/`. Use `docs/decisions/template.md` as a starting point; number files sequentially (`0002-...`, `0003-...`).
