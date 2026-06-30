@@ -11,6 +11,8 @@ export function buildApp({ db }) {
   app.register(cookie);
   app.register(cors, { origin: true, credentials: true });
 
+  app.get("/health", async () => ({ ok: true }));
+
   // публічні роути — без перевірки сесії
   app.register(authRoutes, { prefix: "/api", db });
 

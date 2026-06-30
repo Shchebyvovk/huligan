@@ -36,8 +36,8 @@ CREATE TABLE test_scenarios (
 -- Запуски навантажувальних тестів
 CREATE TABLE test_runs (
   id             SERIAL PRIMARY KEY,
-  scenario_id    INTEGER NOT NULL REFERENCES test_scenarios(id),
-  concurrency    INTEGER NOT NULL,     -- кількість паралельних віртуальних юзерів
+  scenario       JSONB NOT NULL,
+  concurrency    INTEGER NOT NULL,
   status         TEXT NOT NULL DEFAULT 'pending'
                    CHECK (status IN ('pending','running','completed','failed')),
   started_at     TIMESTAMPTZ,

@@ -1,15 +1,11 @@
+import pg from "pg";
 import { buildApp } from "./src/server/index.js";
+import { createPgAdapter } from "./src/db/pgAdapter.js";
 
-// TODO: замінити на реальний PostgreSQL адаптер
-const db = {
-  async findAdminByEmail() { return null; },
-  async createSession() {},
-  async findSession() { return null; },
-  async deleteSession() {},
-  async getRuns() { return []; },
-  async createRun(data) { return { id: Date.now(), ...data, status: "pending" }; },
-};
+const { Pool } = pg;
 
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const db = createPgAdapter(pool);
 const app = buildApp({ db });
 
 app.listen({ port: process.env.PORT ?? 3000, host: "0.0.0.0" }, (err, address) => {
