@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/Shchebyvovk/huligan/compare/v1.7.0...v1.8.0) (2026-06-30)
+
+
+### Features
+
+* **db:** pg-адаптер, міграції Neon, /health endpoint ([e6d2b97](https://github.com/Shchebyvovk/huligan/commit/e6d2b97cb244c8511c107daf13a4c96080899496))
+
 # [1.7.0](https://github.com/Shchebyvovk/huligan/compare/v1.6.0...v1.7.0) (2026-06-30)
 
 
