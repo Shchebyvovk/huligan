@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/Shchebyvovk/huligan/compare/v1.12.0...v1.13.0) (2026-06-30)
+
+
+### Features
+
+* **scenarios:** кнопка видалення і ліміт 10 останніх сценаріїв ([958a996](https://github.com/Shchebyvovk/huligan/commit/958a99641585f0cbcadc71e569cc359cc822f3dc))
+
 # [1.12.0](https://github.com/Shchebyvovk/huligan/compare/v1.11.0...v1.12.0) (2026-06-30)
 
 
