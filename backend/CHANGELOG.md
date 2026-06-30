@@ -1,3 +1,10 @@
+## [1.20.3](https://github.com/Shchebyvovk/huligan/compare/v1.20.2...v1.20.3) (2026-06-30)
+
+
+### Bug Fixes
+
+* alter test_users to add missing columns ([8091504](https://github.com/Shchebyvovk/huligan/commit/8091504426110db942464a731f335a8ad65e0107))
+
 ## [1.20.2](https://github.com/Shchebyvovk/huligan/compare/v1.20.1...v1.20.2) (2026-06-30)
 
 
