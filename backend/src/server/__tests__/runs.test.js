@@ -36,7 +36,7 @@ const loginAndGetCookie = async (app) => {
 
 describe("GET /api/runs", () => {
   it("повертає список ранів", async () => {
-    const app = buildApp({ db: makeDb() });
+    const app = buildApp({ db: makeDb(), startRun: async () => {} });
     const cookie = await loginAndGetCookie(app);
 
     const res = await app.inject({ method: "GET", url: "/api/runs", headers: { cookie } });
@@ -49,7 +49,7 @@ describe("GET /api/runs", () => {
 
 describe("POST /api/runs", () => {
   it("створює новий ран і повертає його", async () => {
-    const app = buildApp({ db: makeDb() });
+    const app = buildApp({ db: makeDb(), startRun: async () => {} });
     const cookie = await loginAndGetCookie(app);
 
     const res = await app.inject({
@@ -65,7 +65,7 @@ describe("POST /api/runs", () => {
   });
 
   it("повертає 400 якщо concurrency відсутній", async () => {
-    const app = buildApp({ db: makeDb() });
+    const app = buildApp({ db: makeDb(), startRun: async () => {} });
     const cookie = await loginAndGetCookie(app);
 
     const res = await app.inject({

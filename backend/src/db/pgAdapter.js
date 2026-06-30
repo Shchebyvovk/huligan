@@ -35,6 +35,16 @@ export function createPgAdapter(pool) {
       return rows;
     },
 
+    async updateRunStatus(id, status) {
+      await pool.query(
+        `UPDATE test_runs SET status = $2,
+           started_at = CASE WHEN $2 = 'running' THEN now() ELSE started_at END,
+           finished_at = CASE WHEN $2 IN ('completed','failed') THEN now() ELSE finished_at END
+         WHERE id = $1`,
+        [id, status]
+      );
+    },
+
     async createRun({ scenario, concurrency }) {
       const { rows } = await pool.query(
         `INSERT INTO test_runs (scenario, concurrency, status)

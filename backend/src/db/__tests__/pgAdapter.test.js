@@ -74,6 +74,18 @@ describe("getRuns", () => {
   });
 });
 
+describe("updateRunStatus", () => {
+  it("оновлює статус рану", async () => {
+    const pool = makePool([]);
+    const db = createPgAdapter(pool);
+    await db.updateRunStatus(1, "running");
+    expect(pool.query).toHaveBeenCalledWith(
+      expect.stringContaining("test_runs"),
+      [1, "running"]
+    );
+  });
+});
+
 describe("createRun", () => {
   it("вставляє і повертає новий ран", async () => {
     const run = { id: 1, scenario: { steps: [] }, concurrency: 10, status: "pending" };

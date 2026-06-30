@@ -5,7 +5,7 @@ import { validateSession } from "../auth/session.js";
 import { authRoutes } from "./routes/auth.js";
 import { runsRoutes } from "./routes/runs.js";
 
-export function buildApp({ db }) {
+export function buildApp({ db, startRun }) {
   const app = Fastify({ logger: false });
 
   app.register(cookie);
@@ -25,7 +25,7 @@ export function buildApp({ db }) {
       req.userId = session.userId;
     });
 
-    instance.register(runsRoutes, { prefix: "/api", db });
+    instance.register(runsRoutes, { prefix: "/api", db, startRun });
   });
 
   return app;
