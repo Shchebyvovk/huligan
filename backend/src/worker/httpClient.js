@@ -11,19 +11,29 @@ export function makeHttpClient(baseUrl, { fetch: _fetch = globalThis.fetch } = {
     return res
   }
 
+  async function timed(fn) {
+    const start = Date.now()
+    await fn()
+    return Date.now() - start
+  }
+
   return {
     async login(payload) {
-      const res = await post('/api/login', payload)
-      cookie = res.headers.get('set-cookie') ?? ''
+      const ms = await timed(async () => {
+        const res = await post('/api/login', payload)
+        cookie = res.headers.get('set-cookie') ?? ''
+      })
+      return ms
     },
 
     async sendMessage(payload) {
-      await post('/api/messages', payload, cookie ? { Cookie: cookie } : {})
+      return timed(() => post('/api/messages', payload, cookie ? { Cookie: cookie } : {}))
     },
 
     async logout() {
-      await post('/api/logout', {}, cookie ? { Cookie: cookie } : {})
+      const ms = await timed(() => post('/api/logout', {}, cookie ? { Cookie: cookie } : {}))
       cookie = ''
+      return ms
     },
 
     wait({ ms } = {}) {
