@@ -1,3 +1,10 @@
+## [1.20.1](https://github.com/Shchebyvovk/huligan/compare/v1.20.0...v1.20.1) (2026-06-30)
+
+
+### Bug Fixes
+
+* **frontend:** guard against undefined data in UsersPage ([8c737cd](https://github.com/Shchebyvovk/huligan/commit/8c737cd17d6f21e59570b3baf6c3375c22d02f8b))
+
 # [1.20.0](https://github.com/Shchebyvovk/huligan/compare/v1.19.0...v1.20.0) (2026-06-30)
 
 
