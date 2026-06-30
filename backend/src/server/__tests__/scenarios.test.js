@@ -82,3 +82,20 @@ describe("POST /api/scenarios", () => {
     expect(res.statusCode).toBe(400);
   });
 });
+
+describe("DELETE /api/scenarios/:name", () => {
+  it("видаляє сценарій і він зникає зі списку", async () => {
+    await writeFile(join(dir, "chat-flood.json"), JSON.stringify([{ action: "logout" }]));
+
+    const app = buildApp({ db: makeDb(), scenariosDir: dir, startRun: async () => {} });
+    const cookie = await loginAndGetCookie(app);
+
+    const res = await app.inject({
+      method: "DELETE", url: "/api/scenarios/chat-flood", headers: { cookie },
+    });
+    expect(res.statusCode).toBe(204);
+
+    const list = await app.inject({ method: "GET", url: "/api/scenarios", headers: { cookie } });
+    expect(list.json()).toEqual([]);
+  });
+});

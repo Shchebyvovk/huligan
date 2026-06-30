@@ -21,4 +21,5 @@ export const api = {
   createRun:     (data)            => request('POST', '/api/runs', data).then(r => r?.json()),
   getScenarios:   ()               => request('GET',  '/api/scenarios').then(r => r?.json() ?? []),
   createScenario: (data)           => request('POST', '/api/scenarios', data),
+  deleteScenario: (name)           => request('DELETE', `/api/scenarios/${encodeURIComponent(name)}`),
 }

@@ -44,6 +44,21 @@ export default function NewRunModal({ onClose }) {
     }
   }
 
+  async function handleDelete(name, e) {
+    e.stopPropagation()
+    setError('')
+    try {
+      await api.deleteScenario(name)
+      setScenarios(list => {
+        const next = list.filter(s => s.name !== name)
+        if (scenarioName === name) setScenarioName(next[0]?.name ?? '')
+        return next
+      })
+    } catch {
+      setError('Не вдалося видалити сценарій')
+    }
+  }
+
   async function handleStart() {
     const scenario = scenarios.find(s => s.name === scenarioName)
     if (!scenario) {
@@ -78,16 +93,46 @@ export default function NewRunModal({ onClose }) {
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-400">Сценарій</label>
-            <select
-              value={scenarioName}
-              onChange={e => setScenarioName(e.target.value)}
-              disabled={scenarios.length === 0}
-              className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-purple-500 transition-colors disabled:opacity-50"
-            >
-              {scenarios.length === 0 && <option value="">Немає завантажених сценаріїв</option>}
-              {scenarios.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
-            </select>
+            <label className="text-sm text-gray-400">
+              Сценарій
+              <span className="text-gray-600 ml-2">(останні 10)</span>
+            </label>
+            {scenarios.length === 0 ? (
+              <p className="text-sm text-gray-500 px-1 py-1">Немає завантажених сценаріїв</p>
+            ) : (
+              <div className="flex flex-col gap-1 max-h-40 overflow-y-auto">
+                {scenarios.map(s => (
+                  <label
+                    key={s.name}
+                    className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg border text-sm cursor-pointer transition-colors ${
+                      scenarioName === s.name
+                        ? 'bg-purple-600/20 border-purple-500 text-white'
+                        : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-600'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2 truncate">
+                      <input
+                        type="radio"
+                        name="scenario"
+                        value={s.name}
+                        checked={scenarioName === s.name}
+                        onChange={() => setScenarioName(s.name)}
+                        className="cursor-pointer"
+                      />
+                      <span className="truncate">{s.name}</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={e => handleDelete(s.name, e)}
+                      className="text-gray-500 hover:text-red-400 transition-colors text-xs cursor-pointer shrink-0"
+                      title="Видалити сценарій"
+                    >
+                      Видалити
+                    </button>
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-1">
