@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/Shchebyvovk/huligan/compare/v1.13.2...v1.14.0) (2026-06-30)
+
+
+### Features
+
+* **frontend:** редактор сценаріїв з AI-генератором (stub) і налаштуваннями ([1955879](https://github.com/Shchebyvovk/huligan/commit/1955879a5b5e7a65312d94c626b66d6dc8a8110d))
+
 ## [1.13.2](https://github.com/Shchebyvovk/huligan/compare/v1.13.1...v1.13.2) (2026-06-30)
 
 
