@@ -7,13 +7,14 @@ const STATUS_STYLES = {
 
 export default function RunCard({ run }) {
   const badge = STATUS_STYLES[run.status] ?? STATUS_STYLES.pending
-  const time = new Date(run.started_at).toLocaleString('uk-UA')
+  const scenarioName = run.scenario?.name ?? run.scenario ?? '—'
+  const time = new Date(run.createdAt ?? run.started_at).toLocaleString('uk-UA')
 
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl px-5 py-4 flex items-center justify-between">
       <div>
         <div className="flex items-center gap-3 mb-1">
-          <span className="font-medium text-sm">{run.scenario}</span>
+          <span className="font-medium text-sm">{scenarioName}</span>
           <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${badge}`}>
             {run.status}
           </span>

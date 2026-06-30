@@ -1,18 +1,35 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { api } from '../api'
 import SettingsModal from '../components/SettingsModal'
 import RunCard from '../components/RunCard'
 import NewRunModal from '../components/NewRunModal'
 
-const MOCK_RUNS = [
-  { id: 3, scenario: 'chat-flood', concurrency: 500, status: 'running',   started_at: '2026-06-30T14:00:00Z' },
-  { id: 2, scenario: 'login-loop', concurrency: 100, status: 'completed', started_at: '2026-06-30T12:00:00Z' },
-  { id: 1, scenario: 'chat-flood', concurrency: 200, status: 'failed',    started_at: '2026-06-30T10:00:00Z' },
-]
-
 export default function DashboardPage() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [newRunOpen, setNewRunOpen] = useState(false)
-  const [runs] = useState(MOCK_RUNS)
+  const [runs, setRuns] = useState([])
+  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
+
+  async function loadRuns() {
+    setLoading(true)
+    const data = await api.getRuns()
+    if (data) setRuns(data)
+    setLoading(false)
+  }
+
+  useEffect(() => { loadRuns() }, [])
+
+  async function handleLogout() {
+    await api.logout()
+    navigate('/login')
+  }
+
+  function handleRunCreated() {
+    setNewRunOpen(false)
+    loadRuns()
+  }
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -20,12 +37,20 @@ export default function DashboardPage() {
         <span className="font-semibold text-lg">
           Huligan <span className="text-purple-400">Admin</span>
         </span>
-        <button
-          onClick={() => setSettingsOpen(true)}
-          className="text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
-        >
-          Налаштування
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setSettingsOpen(true)}
+            className="text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
+          >
+            Налаштування
+          </button>
+          <button
+            onClick={handleLogout}
+            className="text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
+          >
+            Вийти
+          </button>
+        </div>
       </header>
 
       <main className="max-w-3xl mx-auto px-6 py-8">
@@ -39,13 +64,19 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        <div className="flex flex-col gap-3">
-          {runs.map(run => <RunCard key={run.id} run={run} />)}
-        </div>
+        {loading ? (
+          <p className="text-gray-500 text-sm">Завантаження...</p>
+        ) : runs.length === 0 ? (
+          <p className="text-gray-500 text-sm">Ще немає ранів</p>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {runs.map(run => <RunCard key={run.id} run={run} />)}
+          </div>
+        )}
       </main>
 
       {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
-      {newRunOpen && <NewRunModal onClose={() => setNewRunOpen(false)} />}
+      {newRunOpen && <NewRunModal onClose={handleRunCreated} />}
     </div>
   )
 }

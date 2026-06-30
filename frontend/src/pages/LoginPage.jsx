@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { api } from '../api'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -13,11 +14,8 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      })
+      const res = await api.login(email, password)
+      if (!res) return
       if (!res.ok) {
         const { message } = await res.json()
         setError(message || 'Невірний email або пароль')

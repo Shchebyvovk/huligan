@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { api } from '../api'
 
 const SCENARIOS = ['chat-flood', 'login-loop']
 
@@ -6,16 +7,16 @@ export default function NewRunModal({ onClose }) {
   const [scenario, setScenario] = useState(SCENARIOS[0])
   const [concurrency, setConcurrency] = useState(100)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   async function handleStart() {
     setLoading(true)
+    setError('')
     try {
-      await fetch('/api/runs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scenario, concurrency: Number(concurrency) }),
-      })
-      onClose()
+      const run = await api.createRun({ scenario: { name: scenario }, concurrency: Number(concurrency) })
+      if (run) onClose()
+    } catch {
+      setError('Не вдалося створити ран')
     } finally {
       setLoading(false)
     }
@@ -61,6 +62,8 @@ export default function NewRunModal({ onClose }) {
             />
           </div>
         </div>
+
+        {error && <p className="mt-3 text-red-400 text-sm">{error}</p>}
 
         <button
           onClick={handleStart}
