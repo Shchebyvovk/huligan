@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/Shchebyvovk/huligan/compare/v1.18.0...v1.19.0) (2026-06-30)
+
+
+### Features
+
+* test user registry with DB pool ([5adf9a1](https://github.com/Shchebyvovk/huligan/commit/5adf9a1d580bc22c30056f911ba12b56fb188cde))
+
 # [1.18.0](https://github.com/Shchebyvovk/huligan/compare/v1.17.0...v1.18.0) (2026-06-30)
 
 
