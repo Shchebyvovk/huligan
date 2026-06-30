@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/Shchebyvovk/huligan/compare/v1.9.2...v1.10.0) (2026-06-30)
+
+
+### Features
+
+* **frontend:** авто-оновлення статусу ранів кожні 3с поки є активні ([f12d593](https://github.com/Shchebyvovk/huligan/commit/f12d593842d3998278ae4287a70ac071cc3ccd5c))
+
 ## [1.9.2](https://github.com/Shchebyvovk/huligan/compare/v1.9.1...v1.9.2) (2026-06-30)
 
 
