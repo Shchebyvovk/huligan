@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/Shchebyvovk/huligan/compare/v1.4.0...v1.5.0) (2026-06-30)
+
+
+### Features
+
+* **orchestrator:** orchestrate — розподіл юзерів з контролем concurrency ([de455b4](https://github.com/Shchebyvovk/huligan/commit/de455b4fb85822b6c4cc3277cc5e98f07b7c3254))
+
 # [1.4.0](https://github.com/Shchebyvovk/huligan/compare/v1.3.0...v1.4.0) (2026-06-30)
 
 
