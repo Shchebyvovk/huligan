@@ -12,14 +12,21 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  async function loadRuns() {
-    setLoading(true)
+  async function loadRuns({ silent = false } = {}) {
+    if (!silent) setLoading(true)
     const data = await api.getRuns()
     if (data) setRuns(data)
-    setLoading(false)
+    if (!silent) setLoading(false)
   }
 
   useEffect(() => { loadRuns() }, [])
+
+  useEffect(() => {
+    const hasActiveRun = runs.some(r => r.status === 'pending' || r.status === 'running')
+    if (!hasActiveRun) return
+    const id = setInterval(() => loadRuns({ silent: true }), 3000)
+    return () => clearInterval(id)
+  }, [runs])
 
   async function handleLogout() {
     await api.logout()
