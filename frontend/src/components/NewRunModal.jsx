@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { api } from '../api'
+import ScenarioEditorModal from './ScenarioEditorModal'
 
 export default function NewRunModal({ onClose }) {
   const [scenarios, setScenarios] = useState([])
@@ -9,6 +10,7 @@ export default function NewRunModal({ onClose }) {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
   const [confirmDelete, setConfirmDelete] = useState(null)
+  const [editorOpen, setEditorOpen] = useState(false)
   const fileInputRef = useRef(null)
 
   useEffect(() => {
@@ -151,14 +153,23 @@ export default function NewRunModal({ onClose }) {
           </div>
 
           <div className="flex flex-col gap-1">
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-              className="text-sm text-purple-400 hover:text-purple-300 transition-colors text-left cursor-pointer disabled:opacity-50"
-            >
-              {uploading ? 'Завантаження...' : '+ Завантажити сценарій з файлу (.json)'}
-            </button>
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="text-sm text-purple-400 hover:text-purple-300 transition-colors text-left cursor-pointer disabled:opacity-50"
+              >
+                {uploading ? 'Завантаження...' : '+ Завантажити з файлу (.json)'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditorOpen(true)}
+                className="text-sm text-purple-400 hover:text-purple-300 transition-colors cursor-pointer"
+              >
+                ✦ Редактор / Генератор
+              </button>
+            </div>
             <input
               ref={fileInputRef}
               type="file"
@@ -194,6 +205,20 @@ export default function NewRunModal({ onClose }) {
           {loading ? 'Запуск...' : 'Запустити'}
         </button>
       </div>
+
+      {editorOpen && (
+        <ScenarioEditorModal
+          onClose={() => setEditorOpen(false)}
+          onSaved={saved => {
+            setScenarios(list => {
+              const next = [...list.filter(s => s.name !== saved.name), saved].slice(-10)
+              return next
+            })
+            setScenarioName(saved.name)
+            setEditorOpen(false)
+          }}
+        />
+      )}
     </div>
   )
 }
