@@ -1,3 +1,13 @@
+# [1.18.0](https://github.com/Shchebyvovk/huligan/compare/v1.17.0...v1.18.0) (2026-06-30)
+
+
+### Features
+
+* add real HTTP worker client and targetUrl field ([61bbefa](https://github.com/Shchebyvovk/huligan/commit/61bbefa86a0801d60f4b1e5176cf2c90bfdb9659))
+* add target-server (load test victim) ([fbad5f8](https://github.com/Shchebyvovk/huligan/commit/fbad5f8de18e9c321c9310d39139577c104e7a45))
+* run stats and target-server metrics ([a71548e](https://github.com/Shchebyvovk/huligan/commit/a71548e934cc0923373d9f266ee5e1973a3bbf10))
+* user pool support in scenarios ([a8c0c63](https://github.com/Shchebyvovk/huligan/commit/a8c0c632e0f29c12c4317b03da60320b05d45058))
+
 # [1.17.0](https://github.com/Shchebyvovk/huligan/compare/v1.16.0...v1.17.0) (2026-06-30)
 
 
