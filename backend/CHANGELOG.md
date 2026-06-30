@@ -1,3 +1,10 @@
+## [1.13.2](https://github.com/Shchebyvovk/huligan/compare/v1.13.1...v1.13.2) (2026-06-30)
+
+
+### Bug Fixes
+
+* **cors:** явно дозволити DELETE в CORS preflight ([61eaad4](https://github.com/Shchebyvovk/huligan/commit/61eaad479fa4fd2bdf413f4f59c78bf4570b2410))
+
 ## [1.13.1](https://github.com/Shchebyvovk/huligan/compare/v1.13.0...v1.13.1) (2026-06-30)
 
 
