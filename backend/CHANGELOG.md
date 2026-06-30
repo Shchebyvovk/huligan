@@ -1,3 +1,10 @@
+## [1.9.2](https://github.com/Shchebyvovk/huligan/compare/v1.9.1...v1.9.2) (2026-06-30)
+
+
+### Bug Fixes
+
+* **auth:** sameSite=none + secure для крос-origin сесійних кук ([d2052b7](https://github.com/Shchebyvovk/huligan/commit/d2052b794da577d7f6098ab936db391315ad88a2))
+
 ## [1.9.1](https://github.com/Shchebyvovk/huligan/compare/v1.9.0...v1.9.1) (2026-06-30)
 
 
