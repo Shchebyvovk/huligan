@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/Shchebyvovk/huligan/compare/v1.9.0...v1.9.1) (2026-06-30)
+
+
+### Bug Fixes
+
+* **frontend:** SPA fallback _redirects для Render ([441dae7](https://github.com/Shchebyvovk/huligan/commit/441dae7a7d15401c123365e5f2abc8691f58326c))
+
 # [1.9.0](https://github.com/Shchebyvovk/huligan/compare/v1.8.0...v1.9.0) (2026-06-30)
 
 
