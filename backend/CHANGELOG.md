@@ -1,3 +1,10 @@
+# [1.20.0](https://github.com/Shchebyvovk/huligan/compare/v1.19.0...v1.20.0) (2026-06-30)
+
+
+### Features
+
+* users pool page with filter and generate ([f16f0b8](https://github.com/Shchebyvovk/huligan/commit/f16f0b89c3e09813b47f35fa1c3f2dd9125fcff2))
+
 # [1.19.0](https://github.com/Shchebyvovk/huligan/compare/v1.18.0...v1.19.0) (2026-06-30)
 
 
