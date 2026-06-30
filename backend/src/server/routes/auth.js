@@ -10,7 +10,7 @@ export async function authRoutes(app, { db }) {
     }
     const token = await createSession(user.id, db);
     reply
-      .setCookie("session", token, { httpOnly: true, path: "/", sameSite: "lax" })
+      .setCookie("session", token, { httpOnly: true, path: "/", sameSite: "none", secure: true })
       .send({ ok: true });
   });
 
@@ -18,7 +18,7 @@ export async function authRoutes(app, { db }) {
     const token = req.cookies?.session;
     if (token) await db.deleteSession(token);
     reply
-      .setCookie("session", "", { httpOnly: true, path: "/", expires: new Date(0) })
+      .setCookie("session", "", { httpOnly: true, path: "/", sameSite: "none", secure: true, expires: new Date(0) })
       .send({ ok: true });
   });
 }
