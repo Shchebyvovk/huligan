@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/Shchebyvovk/huligan/compare/v1.11.0...v1.12.0) (2026-06-30)
+
+
+### Features
+
+* **scenarios:** сценарії з файлів — список, завантаження, вибір у NewRunModal ([8b345cc](https://github.com/Shchebyvovk/huligan/commit/8b345cce074262a8cf403b5ed42203075e300160))
+
 # [1.11.0](https://github.com/Shchebyvovk/huligan/compare/v1.10.0...v1.11.0) (2026-06-30)
 
 
