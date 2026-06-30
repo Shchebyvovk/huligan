@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Shchebyvovk/huligan/compare/v1.0.0...v1.1.0) (2026-06-30)
+
+
+### Features
+
+* **settings:** scanThemes і scanLocales — сканування тем і локалей з ФС ([8b9bbc8](https://github.com/Shchebyvovk/huligan/commit/8b9bbc8f7c5e7448a3fd06b8ca6e09507a5eb7f0))
+
 # 1.0.0 (2026-06-30)
 
 
