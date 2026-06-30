@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/Shchebyvovk/huligan/compare/v1.2.0...v1.3.0) (2026-06-30)
+
+
+### Features
+
+* **auth:** createSession і validateSession з db-адаптером і TTL ([8f2a80e](https://github.com/Shchebyvovk/huligan/commit/8f2a80e9c28d7a8c2ed7f559b262773c641c71b9))
+
 # [1.2.0](https://github.com/Shchebyvovk/huligan/compare/v1.1.0...v1.2.0) (2026-06-30)
 
 
