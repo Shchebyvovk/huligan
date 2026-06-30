@@ -34,6 +34,8 @@ Workers (Node.js / Go)
 
 Only `src/settings/mergeSettings.js` is implemented. Next modules by priority:
 1. `scanThemes` / `scanLocales` — read available themes and locales from the filesystem
+2. `hashPassword` / `verifyPassword` — local auth (email + password)
+3. `createSession` / `validateSession` — server-side sessions
 
 ## Code
 
