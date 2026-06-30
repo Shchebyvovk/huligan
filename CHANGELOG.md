@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/Shchebyvovk/huligan/compare/v1.1.0...v1.2.0) (2026-06-30)
+
+
+### Features
+
+* **auth:** hashPassword і verifyPassword через node:crypto scrypt ([9653d54](https://github.com/Shchebyvovk/huligan/commit/9653d54a313c6a154a9d68a7a0e87f18ec919fd0))
+
 # [1.1.0](https://github.com/Shchebyvovk/huligan/compare/v1.0.0...v1.1.0) (2026-06-30)
 
 
