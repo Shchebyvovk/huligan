@@ -13,7 +13,11 @@ export function buildApp({ db, startRun, scenariosDir = DEFAULT_SCENARIOS_DIR })
   const app = Fastify({ logger: false });
 
   app.register(cookie);
-  app.register(cors, { origin: true, credentials: true });
+  app.register(cors, {
+    origin: true,
+    credentials: true,
+    methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"],
+  });
 
   app.get("/health", async () => ({ ok: true }));
 

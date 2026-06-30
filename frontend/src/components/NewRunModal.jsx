@@ -29,6 +29,12 @@ export default function NewRunModal({ onClose }) {
       const text = await file.text()
       const steps = JSON.parse(text)
       const name = file.name.replace(/\.json$/, '')
+
+      if (scenarios.some(s => s.name === name)) {
+        setError(`Сценарій «${name}» вже існує. Видаліть старий або перейменуйте файл.`)
+        setUploading(false)
+        return
+      }
       const res = await api.createScenario({ name, steps })
       if (!res || !res.ok) {
         const body = await res?.json()
