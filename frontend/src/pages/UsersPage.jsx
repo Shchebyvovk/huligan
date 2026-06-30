@@ -59,7 +59,7 @@ export default function UsersPage() {
       const params = { page: p, limit: LIMIT }
       if (f) params.registeredIn = f
       const data = await api.getUsers(params)
-      if (data) { setUsers(data.users); setTotal(data.total) }
+      if (data?.users) { setUsers(data.users); setTotal(data.total ?? 0) }
     } finally {
       setLoading(false)
     }
