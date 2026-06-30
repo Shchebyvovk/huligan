@@ -1,0 +1,19 @@
+export const name = 'Purple Dark'
+
+export default {
+  '--c-bg':            '#030712',
+  '--c-surface':       '#111827',
+  '--c-surface-2':     '#1f2937',
+  '--c-surface-3':     '#374151',
+  '--c-border':        '#1f2937',
+  '--c-border-input':  '#374151',
+  '--c-text':          '#ffffff',
+  '--c-text-2':        '#d1d5db',
+  '--c-text-3':        '#9ca3af',
+  '--c-text-4':        '#6b7280',
+  '--c-accent':        '#c084fc',
+  '--c-accent-bg':     '#9333ea',
+  '--c-accent-hover':  '#a855f7',
+  '--c-accent-faint':  'rgb(147 51 234 / 0.2)',
+  '--c-accent-border': '#a855f7',
+}

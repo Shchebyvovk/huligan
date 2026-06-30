@@ -95,24 +95,24 @@ export default function NewRunModal({ onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div className="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-sm p-6">
+      <div className="bg-[var(--c-surface)] border border-[var(--c-border)] rounded-xl w-full max-w-sm p-6">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-semibold">{t('new_run_title')}</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-xl leading-none cursor-pointer">×</button>
+          <h2 className="font-semibold text-[var(--c-text)]">{t('new_run_title')}</h2>
+          <button onClick={onClose} className="text-[var(--c-text-4)] hover:text-[var(--c-text)] transition-colors text-xl leading-none cursor-pointer">×</button>
         </div>
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-400">
+            <label className="text-sm text-[var(--c-text-3)]">
               {t('new_run_scenario')}
-              <span className="text-gray-600 ml-2">({t('new_run_scenario_hint')})</span>
+              <span className="text-[var(--c-text-4)] ml-2">({t('new_run_scenario_hint')})</span>
             </label>
             <div className="flex gap-2">
               <select
                 value={scenarioName}
                 onChange={e => setScenarioName(e.target.value)}
                 disabled={scenarios.length === 0}
-                className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-purple-500 transition-colors disabled:opacity-50"
+                className="flex-1 bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-3 py-2 text-[var(--c-text)] text-sm outline-none focus:border-[var(--c-accent-border)] transition-colors disabled:opacity-50"
               >
                 {scenarios.length === 0 && <option value="">{t('new_run_no_scenarios')}</option>}
                 {scenarios.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
@@ -121,7 +121,7 @@ export default function NewRunModal({ onClose }) {
                 <button
                   type="button"
                   onClick={() => setConfirmDelete(scenarioName)}
-                  className="text-sm text-gray-500 hover:text-red-400 transition-colors px-2 cursor-pointer"
+                  className="text-sm text-[var(--c-text-4)] hover:text-red-400 transition-colors px-2 cursor-pointer"
                 >
                   {t('new_run_delete')}
                 </button>
@@ -129,10 +129,10 @@ export default function NewRunModal({ onClose }) {
             </div>
 
             {confirmDelete && (
-              <div className="mt-1 flex items-center gap-3 text-sm bg-gray-800 rounded-lg px-3 py-2">
-                <span className="text-gray-300 flex-1">{t('new_run_delete_confirm', confirmDelete)}</span>
+              <div className="mt-1 flex items-center gap-3 text-sm bg-[var(--c-surface-3)] rounded-lg px-3 py-2">
+                <span className="text-[var(--c-text-2)] flex-1">{t('new_run_delete_confirm', confirmDelete)}</span>
                 <button onClick={() => handleDelete(confirmDelete)} className="text-red-400 hover:text-red-300 cursor-pointer font-medium">{t('new_run_confirm_yes')}</button>
-                <button onClick={() => setConfirmDelete(null)} className="text-gray-400 hover:text-white cursor-pointer">{t('new_run_confirm_no')}</button>
+                <button onClick={() => setConfirmDelete(null)} className="text-[var(--c-text-3)] hover:text-[var(--c-text)] cursor-pointer">{t('new_run_confirm_no')}</button>
               </div>
             )}
           </div>
@@ -143,14 +143,14 @@ export default function NewRunModal({ onClose }) {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="text-sm text-purple-400 hover:text-purple-300 transition-colors text-left cursor-pointer disabled:opacity-50"
+                className="text-sm text-[var(--c-accent)] hover:text-[var(--c-accent-hover)] transition-colors text-left cursor-pointer disabled:opacity-50"
               >
                 {uploading ? t('new_run_uploading') : t('new_run_upload')}
               </button>
               <button
                 type="button"
                 onClick={() => setEditorOpen(true)}
-                className="text-sm text-purple-400 hover:text-purple-300 transition-colors cursor-pointer"
+                className="text-sm text-[var(--c-accent)] hover:text-[var(--c-accent-hover)] transition-colors cursor-pointer"
               >
                 {t('new_run_ai')}
               </button>
@@ -159,9 +159,9 @@ export default function NewRunModal({ onClose }) {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-400">
+            <label className="text-sm text-[var(--c-text-3)]">
               {t('new_run_users')}
-              <span className="text-gray-600 ml-2">({t('new_run_users_hint')})</span>
+              <span className="text-[var(--c-text-4)] ml-2">({t('new_run_users_hint')})</span>
             </label>
             <input
               type="number"
@@ -169,7 +169,7 @@ export default function NewRunModal({ onClose }) {
               max={10000}
               value={concurrency}
               onChange={e => setConcurrency(e.target.value)}
-              className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-purple-500 transition-colors"
+              className="bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-3 py-2 text-[var(--c-text)] text-sm outline-none focus:border-[var(--c-accent-border)] transition-colors"
             />
           </div>
         </div>
@@ -179,7 +179,7 @@ export default function NewRunModal({ onClose }) {
         <button
           onClick={handleStart}
           disabled={loading || scenarios.length === 0}
-          className="mt-6 w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white rounded-lg py-2 text-sm font-medium transition-colors cursor-pointer"
+          className="mt-6 w-full bg-[var(--c-accent-bg)] hover:bg-[var(--c-accent-hover)] disabled:opacity-50 text-white rounded-lg py-2 text-sm font-medium transition-colors cursor-pointer"
         >
           {loading ? t('new_run_starting') : t('new_run_start')}
         </button>

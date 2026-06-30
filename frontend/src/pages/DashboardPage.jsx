@@ -41,21 +41,21 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      <header className="border-b border-gray-800 px-6 py-4 flex items-center justify-between">
+    <div className="min-h-screen bg-[var(--c-bg)] text-[var(--c-text)]">
+      <header className="border-b border-[var(--c-border)] px-6 py-4 flex items-center justify-between bg-[var(--c-surface)]">
         <span className="font-semibold text-lg">
-          Huligan <span className="text-purple-400">Admin</span>
+          Huligan <span className="text-[var(--c-accent)]">Admin</span>
         </span>
         <div className="flex items-center gap-4">
           <button
             onClick={() => setSettingsOpen(true)}
-            className="text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
+            className="text-sm text-[var(--c-text-3)] hover:text-[var(--c-text)] transition-colors cursor-pointer"
           >
             {t('nav_settings')}
           </button>
           <button
             onClick={handleLogout}
-            className="text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
+            className="text-sm text-[var(--c-text-3)] hover:text-[var(--c-text)] transition-colors cursor-pointer"
           >
             {t('nav_logout')}
           </button>
@@ -67,16 +67,16 @@ export default function DashboardPage() {
           <h2 className="text-lg font-medium">{t('runs_title')}</h2>
           <button
             onClick={() => setNewRunOpen(true)}
-            className="bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors cursor-pointer"
+            className="bg-[var(--c-accent-bg)] hover:bg-[var(--c-accent-hover)] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors cursor-pointer"
           >
             {t('runs_new')}
           </button>
         </div>
 
         {loading ? (
-          <p className="text-gray-500 text-sm">{t('runs_loading')}</p>
+          <p className="text-[var(--c-text-4)] text-sm">{t('runs_loading')}</p>
         ) : runs.length === 0 ? (
-          <p className="text-gray-500 text-sm">{t('runs_empty')}</p>
+          <p className="text-[var(--c-text-4)] text-sm">{t('runs_empty')}</p>
         ) : (
           <div className="flex flex-col gap-3">
             {runs.map(run => <RunCard key={run.id} run={run} />)}

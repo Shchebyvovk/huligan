@@ -29,10 +29,10 @@ function AiSettingsPanel({ onClose }) {
   }
 
   return (
-    <div className="mt-3 bg-gray-950 border border-gray-700 rounded-lg p-4 flex flex-col gap-3">
+    <div className="mt-3 bg-[var(--c-bg)] border border-[var(--c-border-input)] rounded-lg p-4 flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-300">{t('ai_settings_title')}</span>
-        <button onClick={onClose} className="text-gray-500 hover:text-white text-sm cursor-pointer">✕</button>
+        <span className="text-sm font-medium text-[var(--c-text-2)]">{t('ai_settings_title')}</span>
+        <button onClick={onClose} className="text-[var(--c-text-4)] hover:text-[var(--c-text)] text-sm cursor-pointer">✕</button>
       </div>
       {[
         { key: 'apiUrl', label: t('ai_api_url'),  placeholder: 'https://api.openai.com/v1' },
@@ -40,17 +40,17 @@ function AiSettingsPanel({ onClose }) {
         { key: 'model',  label: t('ai_model'),    placeholder: 'gpt-4o' },
       ].map(({ key, label, placeholder, type = 'text' }) => (
         <div key={key} className="flex flex-col gap-1">
-          <label className="text-xs text-gray-400">{label}</label>
+          <label className="text-xs text-[var(--c-text-3)]">{label}</label>
           <input
             type={type}
             value={settings[key] ?? ''}
             onChange={e => setSettings(s => ({ ...s, [key]: e.target.value }))}
             placeholder={placeholder}
-            className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm outline-none focus:border-purple-500 transition-colors placeholder:text-gray-600"
+            className="bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-3 py-1.5 text-[var(--c-text)] text-sm outline-none focus:border-[var(--c-accent-border)] transition-colors placeholder:text-[var(--c-text-4)]"
           />
         </div>
       ))}
-      <button onClick={save} className="mt-1 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg py-1.5 transition-colors cursor-pointer">
+      <button onClick={save} className="mt-1 bg-[var(--c-surface-3)] hover:bg-[var(--c-surface-2)] text-[var(--c-text)] text-sm rounded-lg py-1.5 transition-colors cursor-pointer">
         {t('ai_settings_save')}
       </button>
     </div>
@@ -63,10 +63,10 @@ function AiGeneratePanel() {
   const [settingsOpen, setSettingsOpen] = useState(false)
 
   return (
-    <div className="mt-3 bg-gray-950 border border-gray-700 rounded-lg p-4 flex flex-col gap-3">
+    <div className="mt-3 bg-[var(--c-bg)] border border-[var(--c-border-input)] rounded-lg p-4 flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-300">{t('ai_title')}</span>
-        <button onClick={() => setSettingsOpen(v => !v)} className="text-xs text-gray-400 hover:text-white transition-colors cursor-pointer">
+        <span className="text-sm font-medium text-[var(--c-text-2)]">{t('ai_title')}</span>
+        <button onClick={() => setSettingsOpen(v => !v)} className="text-xs text-[var(--c-text-3)] hover:text-[var(--c-text)] transition-colors cursor-pointer">
           {t('ai_settings_btn')}
         </button>
       </div>
@@ -78,14 +78,14 @@ function AiGeneratePanel() {
         onChange={e => setPrompt(e.target.value)}
         placeholder={t('ai_prompt_placeholder')}
         rows={3}
-        className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-purple-500 transition-colors resize-none placeholder:text-gray-600"
+        className="bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-3 py-2 text-[var(--c-text)] text-sm outline-none focus:border-[var(--c-accent-border)] transition-colors resize-none placeholder:text-[var(--c-text-4)]"
       />
 
       <div className="flex items-center gap-3">
-        <button disabled title={t('ai_wip')} className="bg-purple-600/40 text-white/40 text-sm rounded-lg px-4 py-1.5 cursor-not-allowed">
+        <button disabled title={t('ai_wip')} className="bg-[var(--c-accent-faint)] text-[var(--c-text-4)] text-sm rounded-lg px-4 py-1.5 cursor-not-allowed">
           {t('ai_generate')}
         </button>
-        <span className="text-xs text-gray-500">{t('ai_wip')}</span>
+        <span className="text-xs text-[var(--c-text-4)]">{t('ai_wip')}</span>
       </div>
     </div>
   )
@@ -160,32 +160,32 @@ export default function ScenarioEditorModal({ onClose, onSaved }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-60">
-      <div className="bg-gray-900 border border-gray-800 rounded-xl w-full max-w-2xl mx-4 flex flex-col max-h-[90vh]">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800 shrink-0">
-          <h2 className="font-semibold">{t('editor_title')}</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-xl leading-none cursor-pointer">×</button>
+      <div className="bg-[var(--c-surface)] border border-[var(--c-border)] rounded-xl w-full max-w-2xl mx-4 flex flex-col max-h-[90vh]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--c-border)] shrink-0">
+          <h2 className="font-semibold text-[var(--c-text)]">{t('editor_title')}</h2>
+          <button onClick={onClose} className="text-[var(--c-text-4)] hover:text-[var(--c-text)] transition-colors text-xl leading-none cursor-pointer">×</button>
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-400">{t('editor_name')}</label>
+            <label className="text-sm text-[var(--c-text-3)]">{t('editor_name')}</label>
             <input
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder={t('editor_name_placeholder')}
-              className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-purple-500 transition-colors placeholder:text-gray-600"
+              className="bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-3 py-2 text-[var(--c-text)] text-sm outline-none focus:border-[var(--c-accent-border)] transition-colors placeholder:text-[var(--c-text-4)]"
             />
           </div>
 
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
-              <label className="text-sm text-gray-400">{t('editor_steps')}</label>
+              <label className="text-sm text-[var(--c-text-3)]">{t('editor_steps')}</label>
               <div className="flex gap-3">
-                <button onClick={() => setAiOpen(v => !v)} className="text-xs text-purple-400 hover:text-purple-300 transition-colors cursor-pointer">
+                <button onClick={() => setAiOpen(v => !v)} className="text-xs text-[var(--c-accent)] hover:text-[var(--c-accent-hover)] transition-colors cursor-pointer">
                   {t('editor_ai')}
                 </button>
-                <button onClick={validate} className="text-xs text-gray-400 hover:text-white transition-colors cursor-pointer">
+                <button onClick={validate} className="text-xs text-[var(--c-text-3)] hover:text-[var(--c-text)] transition-colors cursor-pointer">
                   {t('editor_validate')}
                 </button>
               </div>
@@ -196,7 +196,7 @@ export default function ScenarioEditorModal({ onClose, onSaved }) {
               onChange={e => setContent(e.target.value)}
               spellCheck={false}
               rows={14}
-              className="bg-gray-950 border border-gray-700 rounded-lg px-4 py-3 text-green-300 text-sm font-mono outline-none focus:border-purple-500 transition-colors resize-none"
+              className="bg-[var(--c-bg)] border border-[var(--c-border-input)] rounded-lg px-4 py-3 text-green-300 text-sm font-mono outline-none focus:border-[var(--c-accent-border)] transition-colors resize-none"
             />
 
             {validationMsg && (
@@ -209,13 +209,13 @@ export default function ScenarioEditorModal({ onClose, onSaved }) {
           {aiOpen && <AiGeneratePanel />}
         </div>
 
-        <div className="px-6 py-4 border-t border-gray-800 shrink-0 flex flex-col gap-3">
+        <div className="px-6 py-4 border-t border-[var(--c-border)] shrink-0 flex flex-col gap-3">
           {error && <p className="text-red-400 text-sm">{error}</p>}
           <div className="flex gap-3">
-            <button onClick={onClose} className="flex-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg py-2 text-sm transition-colors cursor-pointer">
+            <button onClick={onClose} className="flex-1 bg-[var(--c-surface-2)] hover:bg-[var(--c-surface-3)] text-[var(--c-text-2)] rounded-lg py-2 text-sm transition-colors cursor-pointer">
               {t('editor_cancel')}
             </button>
-            <button onClick={handleSave} disabled={saving} className="flex-1 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white rounded-lg py-2 text-sm font-medium transition-colors cursor-pointer">
+            <button onClick={handleSave} disabled={saving} className="flex-1 bg-[var(--c-accent-bg)] hover:bg-[var(--c-accent-hover)] disabled:opacity-50 text-white rounded-lg py-2 text-sm font-medium transition-colors cursor-pointer">
               {saving ? t('editor_saving') : t('editor_save')}
             </button>
           </div>

@@ -32,18 +32,18 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+    <div className="min-h-screen bg-[var(--c-bg)] flex items-center justify-center">
       <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-semibold text-white text-center mb-8">
-          {t('login_title')} <span className="text-purple-400">{t('login_subtitle')}</span>
+        <h1 className="text-2xl font-semibold text-[var(--c-text)] text-center mb-8">
+          {t('login_title')} <span className="text-[var(--c-accent)]">{t('login_subtitle')}</span>
         </h1>
 
         <form
           onSubmit={handleSubmit}
-          className="bg-gray-900 border border-gray-800 rounded-xl p-8 flex flex-col gap-4"
+          className="bg-[var(--c-surface)] border border-[var(--c-border)] rounded-xl p-8 flex flex-col gap-4"
         >
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-400" htmlFor="email">{t('login_email')}</label>
+            <label className="text-sm text-[var(--c-text-3)]" htmlFor="email">{t('login_email')}</label>
             <input
               id="email"
               type="email"
@@ -51,19 +51,19 @@ export default function LoginPage() {
               autoFocus
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-purple-500 transition-colors"
+              className="bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-3 py-2 text-[var(--c-text)] text-sm outline-none focus:border-[var(--c-accent-border)] transition-colors"
             />
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-gray-400" htmlFor="password">{t('login_password')}</label>
+            <label className="text-sm text-[var(--c-text-3)]" htmlFor="password">{t('login_password')}</label>
             <input
               id="password"
               type="password"
               required
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-purple-500 transition-colors"
+              className="bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-3 py-2 text-[var(--c-text)] text-sm outline-none focus:border-[var(--c-accent-border)] transition-colors"
             />
           </div>
 
@@ -72,7 +72,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white rounded-lg py-2 text-sm font-medium transition-colors cursor-pointer"
+            className="mt-2 bg-[var(--c-accent-bg)] hover:bg-[var(--c-accent-hover)] disabled:opacity-50 text-white rounded-lg py-2 text-sm font-medium transition-colors cursor-pointer"
           >
             {loading ? t('login_submitting') : t('login_submit')}
           </button>
