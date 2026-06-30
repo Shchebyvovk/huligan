@@ -85,6 +85,7 @@ app.post('/api/login', async (req, reply) => {
   const token = randomBytes(16).toString('hex')
   sessions.set(token, { email, createdAt: Date.now() })
   record('login', Date.now() - start, true)
+  console.log(`[login]   ${email} → ok (${Date.now() - start}ms)`)
 
   reply
     .header('set-cookie', `session=${token}; HttpOnly; Path=/; SameSite=Lax`)
@@ -101,6 +102,7 @@ app.post('/api/messages', async (req, reply) => {
 
   if (!token || !sessions.has(token)) {
     record('messages', Date.now() - start, false)
+    console.log(`[message] UNAUTHORIZED (no valid session)`)
     return reply.code(401).send({ message: 'Unauthorized' })
   }
 
@@ -110,7 +112,9 @@ app.post('/api/messages', async (req, reply) => {
     return reply.code(400).send({ message: "text обов'язковий" })
   }
 
+  const { email } = sessions.get(token)
   record('messages', Date.now() - start, true)
+  console.log(`[message] ${email} → "${text}" (${Date.now() - start}ms)`)
   return { ok: true, messageId: randomBytes(8).toString('hex') }
 })
 
@@ -121,8 +125,10 @@ app.post('/api/logout', async (req, reply) => {
 
   await delay(5, 15)
 
+  const email = token ? sessions.get(token)?.email : null
   if (token) sessions.delete(token)
   record('logout', Date.now() - start, true)
+  console.log(`[logout]  ${email ?? 'unknown'} → ok (${Date.now() - start}ms)`)
 
   reply
     .header('set-cookie', 'session=; HttpOnly; Path=/; Max-Age=0')
