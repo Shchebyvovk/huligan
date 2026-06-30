@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/Shchebyvovk/huligan/compare/v1.14.0...v1.15.0) (2026-06-30)
+
+
+### Features
+
+* **i18n:** додати англійську мову, кнопку перемикання в Налаштуваннях ([6aa801a](https://github.com/Shchebyvovk/huligan/commit/6aa801a129c3b9766ca50649e92ccea6a29e2672))
+
 # [1.14.0](https://github.com/Shchebyvovk/huligan/compare/v1.13.2...v1.14.0) (2026-06-30)
 
 
