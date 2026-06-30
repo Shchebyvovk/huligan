@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/Shchebyvovk/huligan/compare/v1.8.0...v1.9.0) (2026-06-30)
+
+
+### Features
+
+* **frontend:** підключення до реального API ([72d7f44](https://github.com/Shchebyvovk/huligan/commit/72d7f44a0da9dc57ea0638659c1d52bec0ea4319))
+
 # [1.8.0](https://github.com/Shchebyvovk/huligan/compare/v1.7.0...v1.8.0) (2026-06-30)
 
 
