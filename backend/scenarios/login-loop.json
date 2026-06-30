@@ -1,0 +1,5 @@
+[
+  { "action": "login", "payload": { "email": "load-test@huligan.dev", "password": "changeme" } },
+  { "action": "wait", "payload": { "ms": 100 } },
+  { "action": "logout" }
+]

@@ -1,11 +1,15 @@
+import { fileURLToPath } from "url";
 import Fastify from "fastify";
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import { validateSession } from "../auth/session.js";
 import { authRoutes } from "./routes/auth.js";
 import { runsRoutes } from "./routes/runs.js";
+import { scenariosRoutes } from "./routes/scenarios.js";
 
-export function buildApp({ db, startRun }) {
+const DEFAULT_SCENARIOS_DIR = fileURLToPath(new URL("../../scenarios", import.meta.url));
+
+export function buildApp({ db, startRun, scenariosDir = DEFAULT_SCENARIOS_DIR }) {
   const app = Fastify({ logger: false });
 
   app.register(cookie);
@@ -26,6 +30,7 @@ export function buildApp({ db, startRun }) {
     });
 
     instance.register(runsRoutes, { prefix: "/api", db, startRun });
+    instance.register(scenariosRoutes, { prefix: "/api", scenariosDir });
   });
 
   return app;

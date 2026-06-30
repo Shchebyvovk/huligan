@@ -1,0 +1,3 @@
+[
+  { "action": "login", "payload": { "email": "u@test.com" } }
+]

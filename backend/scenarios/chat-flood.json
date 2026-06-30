@@ -1,0 +1,7 @@
+[
+  { "action": "login", "payload": { "email": "load-test@huligan.dev", "password": "changeme" } },
+  { "action": "send_message", "payload": { "text": "hello from huligan" } },
+  { "action": "wait", "payload": { "ms": 200 } },
+  { "action": "send_message", "payload": { "text": "second message" } },
+  { "action": "logout" }
+]

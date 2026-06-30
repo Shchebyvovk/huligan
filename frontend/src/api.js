@@ -15,8 +15,10 @@ async function request(method, path, body) {
 }
 
 export const api = {
-  login:     (email, password) => request('POST', '/api/auth/login', { email, password }),
-  logout:    ()                => request('POST', '/api/auth/logout'),
-  getRuns:   ()                => request('GET',  '/api/runs').then(r => r?.json() ?? []),
-  createRun: (data)            => request('POST', '/api/runs', data).then(r => r?.json()),
+  login:         (email, password) => request('POST', '/api/auth/login', { email, password }),
+  logout:        ()                => request('POST', '/api/auth/logout'),
+  getRuns:       ()                => request('GET',  '/api/runs').then(r => r?.json() ?? []),
+  createRun:     (data)            => request('POST', '/api/runs', data).then(r => r?.json()),
+  getScenarios:   ()               => request('GET',  '/api/scenarios').then(r => r?.json() ?? []),
+  createScenario: (data)           => request('POST', '/api/scenarios', data),
 }

@@ -13,6 +13,6 @@ export async function runsRoutes(app, { db, startRun = runJob }) {
     }
     const run = await db.createRun({ scenario, concurrency });
     reply.code(201).send(run);
-    startRun({ run, db }).catch(err => app.log.error(err));
+    startRun({ run, db, steps: scenario.steps }).catch(err => app.log.error(err));
   });
 }

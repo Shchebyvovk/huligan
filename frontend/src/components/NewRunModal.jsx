@@ -1,19 +1,60 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { api } from '../api'
 
-const SCENARIOS = ['chat-flood', 'login-loop']
-
 export default function NewRunModal({ onClose }) {
-  const [scenario, setScenario] = useState(SCENARIOS[0])
+  const [scenarios, setScenarios] = useState([])
+  const [scenarioName, setScenarioName] = useState('')
   const [concurrency, setConcurrency] = useState(100)
   const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
+  const fileInputRef = useRef(null)
+
+  useEffect(() => {
+    api.getScenarios().then(list => {
+      setScenarios(list)
+      if (list.length > 0) setScenarioName(list[0].name)
+    })
+  }, [])
+
+  async function handleFileUpload(e) {
+    const file = e.target.files[0]
+    e.target.value = ''
+    if (!file) return
+
+    setUploading(true)
+    setError('')
+    try {
+      const text = await file.text()
+      const steps = JSON.parse(text)
+      const name = file.name.replace(/\.json$/, '')
+      const res = await api.createScenario({ name, steps })
+      if (!res.ok) {
+        const { message } = await res.json()
+        setError(message || 'Невалідний файл сценарію')
+        return
+      }
+      const saved = await res.json()
+      setScenarios(list => [...list.filter(s => s.name !== saved.name), saved])
+      setScenarioName(saved.name)
+    } catch {
+      setError('Файл має бути валідним JSON-сценарієм')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   async function handleStart() {
+    const scenario = scenarios.find(s => s.name === scenarioName)
+    if (!scenario) {
+      setError('Оберіть сценарій')
+      return
+    }
+
     setLoading(true)
     setError('')
     try {
-      const run = await api.createRun({ scenario: { name: scenario }, concurrency: Number(concurrency) })
+      const run = await api.createRun({ scenario, concurrency: Number(concurrency) })
       if (run) onClose()
     } catch {
       setError('Не вдалося створити ран')
@@ -39,12 +80,32 @@ export default function NewRunModal({ onClose }) {
           <div className="flex flex-col gap-1">
             <label className="text-sm text-gray-400">Сценарій</label>
             <select
-              value={scenario}
-              onChange={e => setScenario(e.target.value)}
-              className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-purple-500 transition-colors"
+              value={scenarioName}
+              onChange={e => setScenarioName(e.target.value)}
+              disabled={scenarios.length === 0}
+              className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-purple-500 transition-colors disabled:opacity-50"
             >
-              {SCENARIOS.map(s => <option key={s} value={s}>{s}</option>)}
+              {scenarios.length === 0 && <option value="">Немає завантажених сценаріїв</option>}
+              {scenarios.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
             </select>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="text-sm text-purple-400 hover:text-purple-300 transition-colors text-left cursor-pointer disabled:opacity-50"
+            >
+              {uploading ? 'Завантаження...' : '+ Завантажити сценарій з файлу (.json)'}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/json"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
           </div>
 
           <div className="flex flex-col gap-1">
@@ -67,7 +128,7 @@ export default function NewRunModal({ onClose }) {
 
         <button
           onClick={handleStart}
-          disabled={loading}
+          disabled={loading || scenarios.length === 0}
           className="mt-6 w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white rounded-lg py-2 text-sm font-medium transition-colors cursor-pointer"
         >
           {loading ? 'Запуск...' : 'Запустити'}

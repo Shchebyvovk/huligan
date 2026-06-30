@@ -1,0 +1,6 @@
+[
+  { "action": "login", "payload": { "email": "u@test.com", "password": "pass" } },
+  { "action": "send_message", "payload": { "text": "hello" } },
+  { "action": "wait", "payload": { "ms": 100 } },
+  { "action": "logout" }
+]
