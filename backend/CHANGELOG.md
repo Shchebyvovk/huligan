@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/Shchebyvovk/huligan/compare/v1.10.0...v1.11.0) (2026-06-30)
+
+
+### Features
+
+* **orchestrator:** підключити orchestrate до POST /runs ([aa16998](https://github.com/Shchebyvovk/huligan/commit/aa1699864e91917ba809d96e3f64bc6b5dfb3098))
+
 # [1.10.0](https://github.com/Shchebyvovk/huligan/compare/v1.9.2...v1.10.0) (2026-06-30)
 
 
