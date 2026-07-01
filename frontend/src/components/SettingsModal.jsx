@@ -74,8 +74,9 @@ function AdminsTab() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
-  const [msg, setMsg] = useState('')
-  const [msgType, setMsgType] = useState('') // 'ok' | 'err'
+  const [inviteLink, setInviteLink] = useState('')
+  const [copied, setCopied] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     api.getAdmins().then(setAdmins).finally(() => setLoading(false))
@@ -84,30 +85,29 @@ function AdminsTab() {
   async function handleInvite(e) {
     e.preventDefault()
     setSending(true)
-    setMsg('')
+    setError('')
+    setInviteLink('')
     try {
       const res = await api.inviteAdmin(email)
       if (res && res.status === 201) {
         const data = await res.json()
-        const subject = encodeURIComponent('Запрошення в Huligan Admin')
-        const body = encodeURIComponent(
-          `Вас запрошено як адміністратора Huligan.\n\nПерейдіть за посиланням, щоб встановити пароль:\n${data.link}\n\nПосилання діє 24 години.`
-        )
-        window.open(`mailto:${data.email}?subject=${subject}&body=${body}`)
-        setMsg(`Відкрито поштовий клієнт для ${email}`)
-        setMsgType('ok')
+        setInviteLink(data.link)
         setEmail('')
       } else {
         const data = res ? await res.json() : null
-        setMsg(data?.message ?? 'Помилка')
-        setMsgType('err')
+        setError(data?.message ?? 'Помилка')
       }
     } catch {
-      setMsg('Помилка сервера')
-      setMsgType('err')
+      setError('Помилка сервера')
     } finally {
       setSending(false)
     }
+  }
+
+  async function handleCopy() {
+    await navigator.clipboard.writeText(inviteLink)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   return (
@@ -151,8 +151,25 @@ function AdminsTab() {
             {sending ? '...' : 'Запросити'}
           </button>
         </form>
-        {msg && (
-          <p className={`mt-2 text-xs ${msgType === 'ok' ? 'text-green-400' : 'text-red-400'}`}>{msg}</p>
+        {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
+
+        {inviteLink && (
+          <div className="mt-3 flex flex-col gap-2">
+            <p className="text-xs text-[var(--c-text-3)]">Посилання для запрошення (діє 24г):</p>
+            <div className="flex gap-2">
+              <input
+                readOnly
+                value={inviteLink}
+                className="flex-1 bg-[var(--c-surface-2)] border border-[var(--c-border)] rounded-lg px-3 py-2 text-xs text-[var(--c-text-3)] font-mono outline-none truncate"
+              />
+              <button
+                onClick={handleCopy}
+                className="bg-[var(--c-surface-2)] border border-[var(--c-border-input)] hover:border-[var(--c-accent-border)] text-[var(--c-text-3)] hover:text-[var(--c-accent)] text-xs px-3 py-2 rounded-lg transition-colors cursor-pointer whitespace-nowrap"
+              >
+                {copied ? '✓ Скопійовано' : 'Копіювати'}
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>
