@@ -1,3 +1,10 @@
+## [1.31.2](https://github.com/Shchebyvovk/huligan/compare/v1.31.1...v1.31.2) (2026-07-01)
+
+
+### Bug Fixes
+
+* **notifications:** fire for runs completed between polls using createdAt recency check ([a531074](https://github.com/Shchebyvovk/huligan/commit/a531074330128a21b7c8358b03151b391118e21d))
+
 ## [1.31.1](https://github.com/Shchebyvovk/huligan/compare/v1.31.0...v1.31.1) (2026-07-01)
 
 
