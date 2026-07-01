@@ -187,6 +187,41 @@ export function createPgAdapter(pool) {
       );
     },
 
+    async getScenarios() {
+      const { rows } = await pool.query(
+        `SELECT id, name, steps, users, created_at AS "createdAt"
+         FROM test_scenarios ORDER BY created_at DESC LIMIT 10`
+      );
+      return rows;
+    },
+
+    async getScenarioByName(name) {
+      const { rows } = await pool.query(
+        `SELECT id, name, steps, users FROM test_scenarios WHERE name = $1`,
+        [name]
+      );
+      return rows[0] ?? null;
+    },
+
+    async upsertScenario({ name, steps, users = null }) {
+      const { rows } = await pool.query(
+        `INSERT INTO test_scenarios (name, steps, users)
+         VALUES ($1, $2, $3)
+         ON CONFLICT (name) DO UPDATE SET steps = EXCLUDED.steps, users = EXCLUDED.users, created_at = now()
+         RETURNING id, name, steps, users, created_at AS "createdAt"`,
+        [name, JSON.stringify(steps), users ? JSON.stringify(users) : null]
+      );
+      return rows[0];
+    },
+
+    async deleteScenarioByName(name) {
+      const { rowCount } = await pool.query(
+        `DELETE FROM test_scenarios WHERE name = $1`,
+        [name]
+      );
+      return rowCount > 0;
+    },
+
     async createRun({ scenario, concurrency, targetUrl, usersCount = null }) {
       const { rows } = await pool.query(
         `INSERT INTO test_runs (scenario, concurrency, target_url, users_count, status)

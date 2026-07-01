@@ -5,6 +5,7 @@ const STEPS = [{ action: "login" }, { action: "logout" }];
 
 const makeDb = () => ({
   updateRunStatus: vi.fn().mockResolvedValue(undefined),
+  updateRunProgress: vi.fn().mockResolvedValue(undefined),
 });
 
 const okClient = () => ({

@@ -1,22 +1,11 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { mkdtemp, rm, writeFile } from "fs/promises";
-import { tmpdir } from "os";
-import { join } from "path";
+import { describe, it, expect } from "vitest";
 import { buildApp } from "../index.js";
 import { hashPassword } from "../../auth/hashPassword.js";
 
-let dir;
-
-beforeEach(async () => {
-  dir = await mkdtemp(join(tmpdir(), "huligan-scenarios-route-"));
-});
-
-afterEach(async () => {
-  await rm(dir, { recursive: true, force: true });
-});
-
 const makeDb = () => {
   const sessions = {};
+  const scenarios = {};
+
   return {
     async findAdminByEmail(email) {
       return email === "admin@test.com" ? { id: 1, password: await hashPassword("secret") } : null;
@@ -26,6 +15,16 @@ const makeDb = () => {
     async deleteSession(token) { delete sessions[token]; },
     async getRuns() { return []; },
     async createRun(data) { return { id: 1, ...data, status: "pending" }; },
+    async getScenarios() { return Object.values(scenarios); },
+    async upsertScenario({ name, steps, users }) {
+      scenarios[name] = { name, steps, users: users ?? null };
+      return scenarios[name];
+    },
+    async deleteScenarioByName(name) {
+      if (!scenarios[name]) return false;
+      delete scenarios[name];
+      return true;
+    },
   };
 };
 
@@ -38,13 +37,11 @@ const loginAndGetCookie = async (app) => {
 };
 
 describe("GET /api/scenarios", () => {
-  it("повертає список сценаріїв з директорії", async () => {
-    await writeFile(
-      join(dir, "chat-flood.json"),
-      JSON.stringify([{ action: "logout" }])
-    );
+  it("повертає список сценаріїв з БД", async () => {
+    const db = makeDb();
+    await db.upsertScenario({ name: "chat-flood", steps: [{ action: "logout" }] });
 
-    const app = buildApp({ db: makeDb(), scenariosDir: dir, startRun: async () => {} });
+    const app = buildApp({ db, startRun: async () => {} });
     const cookie = await loginAndGetCookie(app);
 
     const res = await app.inject({ method: "GET", url: "/api/scenarios", headers: { cookie } });
@@ -54,8 +51,9 @@ describe("GET /api/scenarios", () => {
 });
 
 describe("POST /api/scenarios", () => {
-  it("зберігає новий сценарій у директорію", async () => {
-    const app = buildApp({ db: makeDb(), scenariosDir: dir, startRun: async () => {} });
+  it("зберігає новий сценарій у БД", async () => {
+    const db = makeDb();
+    const app = buildApp({ db, startRun: async () => {} });
     const cookie = await loginAndGetCookie(app);
 
     const res = await app.inject({
@@ -64,14 +62,15 @@ describe("POST /api/scenarios", () => {
       payload: { name: "login-loop", steps: [{ action: "logout" }] },
     });
     expect(res.statusCode).toBe(201);
-    expect(res.json()).toEqual({ name: "login-loop", steps: [{ action: "logout" }] });
+    expect(res.json()).toMatchObject({ name: "login-loop", steps: [{ action: "logout" }] });
 
     const list = await app.inject({ method: "GET", url: "/api/scenarios", headers: { cookie } });
-    expect(list.json()).toEqual([{ name: "login-loop", steps: [{ action: "logout" }] }]);
+    expect(list.json()).toMatchObject([{ name: "login-loop", steps: [{ action: "logout" }] }]);
   });
 
   it("повертає 400 для невалідного DSL", async () => {
-    const app = buildApp({ db: makeDb(), scenariosDir: dir, startRun: async () => {} });
+    const db = makeDb();
+    const app = buildApp({ db, startRun: async () => {} });
     const cookie = await loginAndGetCookie(app);
 
     const res = await app.inject({
@@ -85,9 +84,10 @@ describe("POST /api/scenarios", () => {
 
 describe("DELETE /api/scenarios/:name", () => {
   it("видаляє сценарій і він зникає зі списку", async () => {
-    await writeFile(join(dir, "chat-flood.json"), JSON.stringify([{ action: "logout" }]));
+    const db = makeDb();
+    await db.upsertScenario({ name: "chat-flood", steps: [{ action: "logout" }] });
 
-    const app = buildApp({ db: makeDb(), scenariosDir: dir, startRun: async () => {} });
+    const app = buildApp({ db, startRun: async () => {} });
     const cookie = await loginAndGetCookie(app);
 
     const res = await app.inject({
@@ -97,5 +97,16 @@ describe("DELETE /api/scenarios/:name", () => {
 
     const list = await app.inject({ method: "GET", url: "/api/scenarios", headers: { cookie } });
     expect(list.json()).toEqual([]);
+  });
+
+  it("повертає 404 якщо сценарій не існує", async () => {
+    const db = makeDb();
+    const app = buildApp({ db, startRun: async () => {} });
+    const cookie = await loginAndGetCookie(app);
+
+    const res = await app.inject({
+      method: "DELETE", url: "/api/scenarios/nonexistent", headers: { cookie },
+    });
+    expect(res.statusCode).toBe(404);
   });
 });
