@@ -1,3 +1,10 @@
+## [1.21.2](https://github.com/Shchebyvovk/huligan/compare/v1.21.1...v1.21.2) (2026-07-01)
+
+
+### Bug Fixes
+
+* switch mailer to nodemailer SMTP (Gmail compatible) ([74203b8](https://github.com/Shchebyvovk/huligan/commit/74203b833e7be13a4af8994b21b566168e8a94d3))
+
 ## [1.21.1](https://github.com/Shchebyvovk/huligan/compare/v1.21.0...v1.21.1) (2026-07-01)
 
 
