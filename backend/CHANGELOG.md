@@ -1,3 +1,10 @@
+# [1.27.0](https://github.com/Shchebyvovk/huligan/compare/v1.26.2...v1.27.0) (2026-07-01)
+
+
+### Features
+
+* partial status + run retention setting ([841b096](https://github.com/Shchebyvovk/huligan/commit/841b0967af3786f99d0f63523b68f1aff70945bd))
+
 ## [1.26.2](https://github.com/Shchebyvovk/huligan/compare/v1.26.1...v1.26.2) (2026-07-01)
 
 
