@@ -1,3 +1,10 @@
+# [1.28.0](https://github.com/Shchebyvovk/huligan/compare/v1.27.0...v1.28.0) (2026-07-01)
+
+
+### Features
+
+* run selection, trash, and comparison ([dbaa29a](https://github.com/Shchebyvovk/huligan/commit/dbaa29ab7fd5c37327855f42d424d9b4fd5e0803))
+
 # [1.27.0](https://github.com/Shchebyvovk/huligan/compare/v1.26.2...v1.27.0) (2026-07-01)
 
 
