@@ -88,7 +88,13 @@ function AdminsTab() {
     try {
       const res = await api.inviteAdmin(email)
       if (res && res.status === 201) {
-        setMsg(`Запрошення надіслано на ${email}`)
+        const data = await res.json()
+        const subject = encodeURIComponent('Запрошення в Huligan Admin')
+        const body = encodeURIComponent(
+          `Вас запрошено як адміністратора Huligan.\n\nПерейдіть за посиланням, щоб встановити пароль:\n${data.link}\n\nПосилання діє 24 години.`
+        )
+        window.open(`mailto:${data.email}?subject=${subject}&body=${body}`)
+        setMsg(`Відкрито поштовий клієнт для ${email}`)
         setMsgType('ok')
         setEmail('')
       } else {

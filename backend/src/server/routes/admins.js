@@ -1,6 +1,5 @@
 import { randomBytes } from "node:crypto";
 import { hashPassword } from "../../auth/hashPassword.js";
-import { sendInviteEmail } from "../../email/mailer.js";
 
 export async function adminsRoutes(app, { db }) {
   // список адмінів
@@ -25,12 +24,9 @@ export async function adminsRoutes(app, { db }) {
     await db.createInvite({ token, email, invitedBy: req.userId, expiresAt });
 
     const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:5173";
-    // fire-and-forget — не блокуємо відповідь
-    sendInviteEmail({ to: email, token, frontendUrl }).catch(err =>
-      console.error("[invite] email failed:", err.message)
-    );
+    const link = `${frontendUrl}/invite/${token}`;
 
-    return reply.code(201).send({ ok: true });
+    return reply.code(201).send({ ok: true, link, email });
   });
 }
 
