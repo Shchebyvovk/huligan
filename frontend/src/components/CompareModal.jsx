@@ -61,19 +61,22 @@ export default function CompareModal({ runA, runB, onClose }) {
           </div>
 
           {/* Summary row */}
-          <div className="grid grid-cols-[1fr_auto_1fr] gap-4 mb-4">
-            {[runA, runB].map((run, idx) => {
-              const r = run.results
-              if (!r) return <div key={idx} className="text-xs text-[var(--c-text-4)]">немає даних</div>
-              return (
-                <div key={idx} className="flex gap-4 text-center">
-                  <div><div className="text-lg font-semibold text-green-400">{r.passed}</div><div className="text-xs text-[var(--c-text-4)]">passed</div></div>
-                  <div><div className="text-lg font-semibold text-red-400">{r.failed}</div><div className="text-xs text-[var(--c-text-4)]">failed</div></div>
-                  <div><div className="text-lg font-semibold text-[var(--c-accent)]">{r.total > 0 ? Math.round(r.passed / r.total * 100) : 0}%</div><div className="text-xs text-[var(--c-text-4)]">success</div></div>
-                </div>
-              )
-            })}
-            <div />
+          <div className="grid grid-cols-[1fr_3rem_1fr] gap-4 mb-4">
+            {(() => {
+              const cells = [runA, runB].map((run, idx) => {
+                const r = run.results
+                if (!r) return <div key={idx} className="text-xs text-[var(--c-text-4)]">немає даних</div>
+                const isRight = idx === 1
+                return (
+                  <div key={idx} className={`flex gap-4 ${isRight ? 'justify-end text-right' : 'text-left'}`}>
+                    <div><div className="text-lg font-semibold text-green-400">{r.passed}</div><div className="text-xs text-[var(--c-text-4)]">passed</div></div>
+                    <div><div className="text-lg font-semibold text-red-400">{r.failed}</div><div className="text-xs text-[var(--c-text-4)]">failed</div></div>
+                    <div><div className="text-lg font-semibold text-[var(--c-accent)]">{r.total > 0 ? Math.round(r.passed / r.total * 100) : 0}%</div><div className="text-xs text-[var(--c-text-4)]">success</div></div>
+                  </div>
+                )
+              })
+              return [cells[0], <div key="mid" />, cells[1]]
+            })()}
           </div>
 
           {/* Per-step comparison */}
