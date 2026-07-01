@@ -1,3 +1,10 @@
+# [1.21.0](https://github.com/Shchebyvovk/huligan/compare/v1.20.3...v1.21.0) (2026-07-01)
+
+
+### Features
+
+* admin invite system with email flow ([55f2e78](https://github.com/Shchebyvovk/huligan/commit/55f2e7812406a27245d98dda59b1fdd527b2ca93))
+
 ## [1.20.3](https://github.com/Shchebyvovk/huligan/compare/v1.20.2...v1.20.3) (2026-06-30)
 
 
