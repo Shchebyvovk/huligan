@@ -1,5 +1,10 @@
-const RETRY_DELAYS = { 429: 2000, 502: 1000, 503: 1500 }
-const MAX_RETRIES = 2
+const BASE_DELAYS = { 429: 3000, 502: 1500, 503: 2000 }
+const MAX_RETRIES = 3
+
+function jitter(base) {
+  // exponential backoff + full jitter: random in [0, base * 2^attempt]
+  return base + Math.random() * base
+}
 
 export function makeHttpClient(baseUrl, { fetch: _fetch = globalThis.fetch } = {}) {
   let cookie = ''
@@ -14,8 +19,10 @@ export function makeHttpClient(baseUrl, { fetch: _fetch = globalThis.fetch } = {
       })
       if (res.ok) return res
       lastStatus = res.status
-      const delay = RETRY_DELAYS[res.status]
-      if (!delay || attempt === MAX_RETRIES) break
+      const base = BASE_DELAYS[res.status]
+      if (!base || attempt === MAX_RETRIES) break
+      // exponential: attempt 0→base, 1→2x, 2→4x, capped at 15s; plus jitter
+      const delay = Math.min(jitter(base * Math.pow(2, attempt)), 15000)
       await new Promise(r => setTimeout(r, delay))
     }
     throw new Error(`${lastStatus}`)
