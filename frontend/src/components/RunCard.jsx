@@ -11,14 +11,23 @@ const STATUS_STYLES = {
 
 function StepRow({ action, s }) {
   return (
-    <div className="flex items-center justify-between text-xs py-1 border-b border-[var(--c-border)] last:border-0">
-      <span className="text-[var(--c-text-3)] font-mono w-32">{action}</span>
-      <span className="text-[var(--c-text-2)]">{s.avg}ms avg</span>
-      <span className="text-[var(--c-text-3)]">{s.min}–{s.max}ms</span>
-      {s.failed > 0
-        ? <span className="text-red-400">{s.failed} err</span>
-        : <span className="text-green-400">✓</span>
-      }
+    <div className="py-1.5 border-b border-[var(--c-border)] last:border-0">
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-[var(--c-text-3)] font-mono w-32">{action}</span>
+        <span className="text-[var(--c-text-2)]">{s.avg}ms avg</span>
+        <span className="text-[var(--c-text-3)]">{s.min}–{s.max}ms</span>
+        {s.failed > 0
+          ? <span className="text-red-400">{s.failed} err</span>
+          : <span className="text-green-400">✓</span>
+        }
+      </div>
+      {s.errors?.length > 0 && (
+        <div className="mt-1 flex flex-col gap-0.5 pl-32">
+          {s.errors.map((e, i) => (
+            <span key={i} className="text-xs text-red-400/80 font-mono truncate">{e}</span>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

@@ -13,13 +13,18 @@ function aggregateResults(allResults) {
 
     for (const r of userResults) {
       if (r.action === 'wait') continue
-      if (!steps[r.action]) steps[r.action] = { count: 0, failed: 0, totalMs: 0, min: Infinity, max: 0 }
+      if (!steps[r.action]) steps[r.action] = { count: 0, failed: 0, totalMs: 0, min: Infinity, max: 0, errors: [] }
       const s = steps[r.action]
       s.count++
       s.totalMs += r.ms
       if (r.ms < s.min) s.min = r.ms
       if (r.ms > s.max) s.max = r.ms
-      if (!r.ok) s.failed++
+      if (!r.ok) {
+        s.failed++
+        if (r.error && s.errors.length < 5 && !s.errors.includes(r.error)) {
+          s.errors.push(r.error)
+        }
+      }
     }
   }
 
@@ -30,6 +35,7 @@ function aggregateResults(allResults) {
       min: s.min === Infinity ? 0 : s.min,
       max: s.max,
       failed: s.failed,
+      errors: s.errors,
     }
   }
 
