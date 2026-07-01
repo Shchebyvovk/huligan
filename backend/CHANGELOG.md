@@ -1,3 +1,10 @@
+## [1.30.1](https://github.com/Shchebyvovk/huligan/compare/v1.30.0...v1.30.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* **notifications:** use useRef for status tracking, add 10s background poll ([9d110e1](https://github.com/Shchebyvovk/huligan/commit/9d110e17a8166cd6f09c2688b680029e1966461d))
+
 # [1.30.0](https://github.com/Shchebyvovk/huligan/compare/v1.29.3...v1.30.0) (2026-07-01)
 
 
