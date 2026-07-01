@@ -13,7 +13,7 @@ function aggregateResults(allResults) {
 
     for (const r of userResults) {
       if (r.action === 'wait') continue
-      if (!steps[r.action]) steps[r.action] = { count: 0, failed: 0, totalMs: 0, min: Infinity, max: 0, errors: [] }
+      if (!steps[r.action]) steps[r.action] = { count: 0, failed: 0, totalMs: 0, min: Infinity, max: 0, errorMap: {} }
       const s = steps[r.action]
       s.count++
       s.totalMs += r.ms
@@ -21,8 +21,8 @@ function aggregateResults(allResults) {
       if (r.ms > s.max) s.max = r.ms
       if (!r.ok) {
         s.failed++
-        if (r.error && s.errors.length < 5 && !s.errors.includes(r.error)) {
-          s.errors.push(r.error)
+        if (r.error) {
+          s.errorMap[r.error] = (s.errorMap[r.error] ?? 0) + 1
         }
       }
     }
@@ -30,12 +30,16 @@ function aggregateResults(allResults) {
 
   const stepsSummary = {}
   for (const [action, s] of Object.entries(steps)) {
+    const errors = Object.entries(s.errorMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8)
+      .map(([msg, count]) => ({ msg, count }))
     stepsSummary[action] = {
       avg: s.count ? Math.round(s.totalMs / s.count) : 0,
       min: s.min === Infinity ? 0 : s.min,
       max: s.max,
       failed: s.failed,
-      errors: s.errors,
+      errors,
     }
   }
 
