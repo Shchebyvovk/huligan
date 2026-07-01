@@ -1,3 +1,10 @@
+# [1.32.0](https://github.com/Shchebyvovk/huligan/compare/v1.31.2...v1.32.0) (2026-07-01)
+
+
+### Features
+
+* **dashboard:** success rate trend sparkline chart with hover tooltips ([3f2e2ae](https://github.com/Shchebyvovk/huligan/commit/3f2e2aebfb2086f2f7dc570a927004390a5587cc))
+
 ## [1.31.2](https://github.com/Shchebyvovk/huligan/compare/v1.31.1...v1.31.2) (2026-07-01)
 
 
