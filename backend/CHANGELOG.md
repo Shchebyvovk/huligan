@@ -1,3 +1,10 @@
+# [1.22.0](https://github.com/Shchebyvovk/huligan/compare/v1.21.3...v1.22.0) (2026-07-01)
+
+
+### Features
+
+* send invite via mailto instead of SMTP ([9d6b948](https://github.com/Shchebyvovk/huligan/commit/9d6b9489dbf9587283ac20a68f92b2760fbedb42))
+
 ## [1.21.3](https://github.com/Shchebyvovk/huligan/compare/v1.21.2...v1.21.3) (2026-07-01)
 
 
