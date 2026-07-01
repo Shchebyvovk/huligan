@@ -235,8 +235,12 @@ export default function NewRunModal({ onClose }) {
           {/* Concurrency + Ramp-up */}
           <div className="flex gap-3">
             <div className="flex flex-col gap-1 flex-1">
-              <label className="text-sm text-[var(--c-text-3)]">
+              <label className="text-sm text-[var(--c-text-3)] flex items-center gap-1">
                 {t('new_run_users')}
+                <span
+                  title={t('new_run_users_hint')}
+                  className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-[var(--c-text-4)] text-[var(--c-text-4)] text-[9px] cursor-help leading-none"
+                >?</span>
               </label>
               <input type="number" min={1} max={10000} value={concurrency}
                 onChange={e => setConcurrency(e.target.value)}
