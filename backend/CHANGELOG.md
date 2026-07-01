@@ -1,3 +1,10 @@
+## [1.29.1](https://github.com/Shchebyvovk/huligan/compare/v1.29.0...v1.29.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* **scheduler:** fix apostrophe syntax error in Ukrainian string ([a077517](https://github.com/Shchebyvovk/huligan/commit/a0775173ef4787e11ff358557c9b58c813592716))
+
 # [1.29.0](https://github.com/Shchebyvovk/huligan/compare/v1.28.2...v1.29.0) (2026-07-01)
 
 
