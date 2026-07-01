@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { api } from '../api'
 import { useT } from '../i18n'
 import AppHeader from '../components/AppHeader'
-import SettingsModal, { getMaxRuns, getTrashDays, getKeepaliveUrl, notify } from '../components/SettingsModal'
+import SettingsModal, { getMaxRuns, getTrashDays, getKeepaliveUrl, notify, getTrendEnabled } from '../components/SettingsModal'
 import RunCard from '../components/RunCard'
 import NewRunModal from '../components/NewRunModal'
 import CompareModal from '../components/CompareModal'
@@ -134,7 +134,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <TrendChart runs={runs} />
+        {getTrendEnabled() && <TrendChart runs={runs} />}
 
         {loading ? (
           <p className="text-[var(--c-text-4)] text-sm">{t('runs_loading')}</p>

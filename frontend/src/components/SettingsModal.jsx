@@ -22,7 +22,9 @@ export const MAX_RUNS_KEY = 'huligan_max_runs'
 export const TRASH_DAYS_KEY = 'huligan_trash_days'
 export const KEEPALIVE_URL_KEY = 'huligan_keepalive_url'
 export const NOTIF_KEY = 'huligan_notifications'
+export const TREND_ENABLED_KEY = 'huligan_trend_enabled'
 export function getMaxRuns() { return Number(localStorage.getItem(MAX_RUNS_KEY) ?? 100) }
+export function getTrendEnabled() { return localStorage.getItem(TREND_ENABLED_KEY) !== 'false' }
 export function getTrashDays() { return Number(localStorage.getItem(TRASH_DAYS_KEY) ?? 30) }
 export function getKeepaliveUrl() { return localStorage.getItem(KEEPALIVE_URL_KEY) ?? '' }
 export function getNotificationsEnabled() { return localStorage.getItem(NOTIF_KEY) === 'true' }
@@ -42,6 +44,7 @@ function AppearanceTab({ onClose }) {
   const [keepaliveUrl, setKeepaliveUrl] = useState(() => getKeepaliveUrl())
   const [notifEnabled, setNotifEnabled] = useState(() => getNotificationsEnabled())
   const [notifPermission, setNotifPermission] = useState(() => typeof Notification !== 'undefined' ? Notification.permission : 'denied')
+  const [trendEnabled, setTrendEnabled] = useState(() => getTrendEnabled())
   const [maxRunsError, setMaxRunsError] = useState('')
   const [trashDaysError, setTrashDaysError] = useState('')
 
@@ -56,6 +59,7 @@ function AppearanceTab({ onClose }) {
     localStorage.setItem(TRASH_DAYS_KEY, String(trashVal))
     localStorage.setItem(KEEPALIVE_URL_KEY, keepaliveUrl.trim())
     localStorage.setItem(NOTIF_KEY, String(notifEnabled))
+    localStorage.setItem(TREND_ENABLED_KEY, String(trendEnabled))
     onClose()
   }
 
@@ -122,6 +126,11 @@ function AppearanceTab({ onClose }) {
         />
         <p className="text-xs text-[var(--c-text-4)]">Пінгується кожні 10 хв щоб не засинав</p>
       </div>
+
+      <label className="flex items-center gap-2 cursor-pointer select-none">
+        <input type="checkbox" checked={trendEnabled} onChange={e => setTrendEnabled(e.target.checked)} className="w-4 h-4 accent-[var(--c-accent)]" />
+        <span className="text-sm text-[var(--c-text-2)]">Показувати графік успішності</span>
+      </label>
 
       <div className="flex flex-col gap-2">
         <label className="text-sm text-[var(--c-text-3)]">Браузерні нотифікації</label>
