@@ -1,3 +1,10 @@
+# [1.29.0](https://github.com/Shchebyvovk/huligan/compare/v1.28.2...v1.29.0) (2026-07-01)
+
+
+### Features
+
+* **scheduler:** scheduled runs with repeat and max iterations ([41113d9](https://github.com/Shchebyvovk/huligan/commit/41113d95bfa68b593bdd9245a47d78e051e35193))
+
 ## [1.28.2](https://github.com/Shchebyvovk/huligan/compare/v1.28.1...v1.28.2) (2026-07-01)
 
 
