@@ -1,6 +1,7 @@
-export async function orchestrate({ users, concurrency, worker }) {
+export async function orchestrate({ users, concurrency, worker, onProgress }) {
   const results = new Array(users.length);
   let index = 0;
+  let completed = 0;
 
   async function runNext() {
     while (index < users.length) {
@@ -10,6 +11,8 @@ export async function orchestrate({ users, concurrency, worker }) {
       } catch (err) {
         results[i] = { ok: false, error: err.message };
       }
+      completed++;
+      if (onProgress) onProgress(completed, users.length);
     }
   }
 

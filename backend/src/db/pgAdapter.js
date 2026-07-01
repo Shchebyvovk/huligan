@@ -29,10 +29,28 @@ export function createPgAdapter(pool) {
 
     async getRuns() {
       const { rows } = await pool.query(
-        `SELECT id, scenario, concurrency, target_url AS "targetUrl", status, results, created_at AS "createdAt"
+        `SELECT id, scenario, concurrency, target_url AS "targetUrl", status, results,
+                completed_count AS "completedCount", created_at AS "createdAt"
          FROM test_runs ORDER BY created_at DESC`
       );
       return rows;
+    },
+
+    async getRunById(id) {
+      const { rows } = await pool.query(
+        `SELECT id, scenario, concurrency, target_url AS "targetUrl", status, results,
+                completed_count AS "completedCount", created_at AS "createdAt"
+         FROM test_runs WHERE id = $1`,
+        [id]
+      );
+      return rows[0] ?? null;
+    },
+
+    async updateRunProgress(id, completedCount) {
+      await pool.query(
+        `UPDATE test_runs SET completed_count = $2 WHERE id = $1`,
+        [id, completedCount]
+      );
     },
 
     async updateRunStatus(id, status, results = null) {

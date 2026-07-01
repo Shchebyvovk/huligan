@@ -56,12 +56,21 @@ export async function runJob({ run, db, makeClient, steps, maxParallel = 200 }) 
   await db.updateRunStatus(run.id, "running")
 
   const allUsers = Array.from({ length: run.concurrency }, (_, i) => i)
+  const updateEvery = Math.max(1, Math.floor(run.concurrency * 0.05))
+  let lastReported = 0
+
   const allResults = await orchestrate({
     users: allUsers,
     concurrency: Math.min(run.concurrency, maxParallel),
     worker: userIndex => {
       const user = userPool ? userPool[userIndex % userPool.length] : undefined
       return runScenario(_steps, _makeClient(userIndex), user)
+    },
+    onProgress: (completed, total) => {
+      if (completed - lastReported >= updateEvery || completed === total) {
+        lastReported = completed
+        db.updateRunProgress(run.id, completed).catch(() => {})
+      }
     },
   })
 

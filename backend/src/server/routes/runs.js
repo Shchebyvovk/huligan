@@ -6,6 +6,12 @@ export async function runsRoutes(app, { db, startRun = runJob }) {
     reply.send(runs);
   });
 
+  app.get("/runs/:id", async (req, reply) => {
+    const run = await db.getRunById(Number(req.params.id));
+    if (!run) return reply.code(404).send({ message: "Not found" });
+    reply.send(run);
+  });
+
   app.post("/runs", async (req, reply) => {
     const { scenario, concurrency, targetUrl, usersCount } = req.body ?? {};
     if (!scenario || concurrency == null || !targetUrl) {
