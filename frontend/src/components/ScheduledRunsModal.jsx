@@ -39,7 +39,7 @@ export default function ScheduledRunsModal({ onClose }) {
   async function handleSubmit(e) {
     e.preventDefault()
     if (!scenarioName || !targetUrl || !scheduledAt) {
-      setError('Заповніть усі обов'язкові поля')
+      setError("Заповніть усі обов'язкові поля")
       return
     }
     setLoading(true)
