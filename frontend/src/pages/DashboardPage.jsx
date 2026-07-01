@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { api } from '../api'
 import { useT } from '../i18n'
 import AppHeader from '../components/AppHeader'
-import SettingsModal, { getMaxRuns, getTrashDays, getKeepaliveUrl } from '../components/SettingsModal'
+import SettingsModal, { getMaxRuns, getTrashDays, getKeepaliveUrl, notify } from '../components/SettingsModal'
 import RunCard from '../components/RunCard'
 import NewRunModal from '../components/NewRunModal'
 import CompareModal from '../components/CompareModal'
@@ -19,12 +19,26 @@ export default function DashboardPage() {
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   const [compareRuns, setCompareRuns] = useState(null)
   const [scheduledOpen, setScheduledOpen] = useState(false)
+  const prevStatusRef = useState(() => ({}))[0]
   const t = useT()
 
   async function loadRuns({ silent = false } = {}) {
     if (!silent) setLoading(true)
     const data = await api.getRuns(getMaxRuns(), getTrashDays())
-    if (data) setRuns(data)
+    if (data) {
+      setRuns(data)
+      for (const run of data) {
+        const prev = prevStatusRef[run.id]
+        const active = run.status === 'pending' || run.status === 'running'
+        if (prev && prev !== run.status && !active) {
+          const scenarioName = run.scenario?.name ?? run.scenario ?? 'Ран'
+          if (run.status === 'completed') notify(`✓ ${scenarioName} завершено`, `${run.results?.passed ?? 0}/${run.results?.total ?? 0} passed`)
+          else if (run.status === 'partial') notify(`⚠ ${scenarioName} частково`, `${run.results?.passed ?? 0}/${run.results?.total ?? 0} passed`)
+          else if (run.status === 'failed') notify(`✗ ${scenarioName} провалено`, `${run.results?.failed ?? 0} помилок`)
+        }
+        prevStatusRef[run.id] = run.status
+      }
+    }
     if (!silent) setLoading(false)
   }
 

@@ -21,9 +21,15 @@ function Tab({ active, onClick, children }) {
 export const MAX_RUNS_KEY = 'huligan_max_runs'
 export const TRASH_DAYS_KEY = 'huligan_trash_days'
 export const KEEPALIVE_URL_KEY = 'huligan_keepalive_url'
+export const NOTIF_KEY = 'huligan_notifications'
 export function getMaxRuns() { return Number(localStorage.getItem(MAX_RUNS_KEY) ?? 100) }
 export function getTrashDays() { return Number(localStorage.getItem(TRASH_DAYS_KEY) ?? 30) }
 export function getKeepaliveUrl() { return localStorage.getItem(KEEPALIVE_URL_KEY) ?? '' }
+export function getNotificationsEnabled() { return localStorage.getItem(NOTIF_KEY) === 'true' }
+export function notify(title, body) {
+  if (!getNotificationsEnabled() || Notification.permission !== 'granted') return
+  new Notification(title, { body, icon: '/favicon.ico' })
+}
 
 function AppearanceTab({ onClose }) {
   const t = useT()
@@ -34,6 +40,8 @@ function AppearanceTab({ onClose }) {
   const [maxRuns, setMaxRuns] = useState(() => getMaxRuns())
   const [trashDays, setTrashDays] = useState(() => getTrashDays())
   const [keepaliveUrl, setKeepaliveUrl] = useState(() => getKeepaliveUrl())
+  const [notifEnabled, setNotifEnabled] = useState(() => getNotificationsEnabled())
+  const [notifPermission, setNotifPermission] = useState(() => typeof Notification !== 'undefined' ? Notification.permission : 'denied')
   const [maxRunsError, setMaxRunsError] = useState('')
   const [trashDaysError, setTrashDaysError] = useState('')
 
@@ -47,6 +55,7 @@ function AppearanceTab({ onClose }) {
     localStorage.setItem(MAX_RUNS_KEY, String(runsVal))
     localStorage.setItem(TRASH_DAYS_KEY, String(trashVal))
     localStorage.setItem(KEEPALIVE_URL_KEY, keepaliveUrl.trim())
+    localStorage.setItem(NOTIF_KEY, String(notifEnabled))
     onClose()
   }
 
@@ -112,6 +121,37 @@ function AppearanceTab({ onClose }) {
           className="bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-3 py-2 text-[var(--c-text)] text-sm outline-none focus:border-[var(--c-accent-border)] transition-colors placeholder:text-[var(--c-text-4)]"
         />
         <p className="text-xs text-[var(--c-text-4)]">Пінгується кожні 10 хв щоб не засинав</p>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label className="text-sm text-[var(--c-text-3)]">Браузерні нотифікації</label>
+        <div className="flex items-center gap-3">
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={notifEnabled}
+              onChange={e => setNotifEnabled(e.target.checked)}
+              className="w-4 h-4 accent-[var(--c-accent)]"
+            />
+            <span className="text-sm text-[var(--c-text-2)]">Увімкнути</span>
+          </label>
+          {notifPermission !== 'granted' && (
+            <button
+              type="button"
+              onClick={async () => {
+                const perm = await Notification.requestPermission()
+                setNotifPermission(perm)
+                if (perm === 'granted') setNotifEnabled(true)
+              }}
+              className="text-xs text-[var(--c-accent)] hover:underline cursor-pointer"
+            >
+              Дозволити в браузері
+            </button>
+          )}
+        </div>
+        <p className="text-xs text-[var(--c-text-4)]">
+          {notifPermission === 'granted' ? '✓ Дозволено браузером' : notifPermission === 'denied' ? '✗ Заблоковано — змініть у налаштуваннях браузера' : 'Потрібен дозвіл браузера'}
+        </p>
       </div>
 
       <button
