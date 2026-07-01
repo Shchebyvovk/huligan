@@ -1,3 +1,10 @@
+## [1.29.3](https://github.com/Shchebyvovk/huligan/compare/v1.29.2...v1.29.3) (2026-07-01)
+
+
+### Bug Fixes
+
+* **scheduler:** create run in DB before firing runJob, fix argument contract ([cb61247](https://github.com/Shchebyvovk/huligan/commit/cb61247a2a45c8a857a5a6509094e8002237062d))
+
 ## [1.29.2](https://github.com/Shchebyvovk/huligan/compare/v1.29.1...v1.29.2) (2026-07-01)
 
 
