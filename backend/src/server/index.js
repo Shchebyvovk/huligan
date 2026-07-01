@@ -7,6 +7,7 @@ import { authRoutes } from "./routes/auth.js";
 import { runsRoutes } from "./routes/runs.js";
 import { scenariosRoutes } from "./routes/scenarios.js";
 import { usersRoutes } from "./routes/users.js";
+import { adminsRoutes, inviteRoutes } from "./routes/admins.js";
 
 const DEFAULT_SCENARIOS_DIR = fileURLToPath(new URL("../../scenarios", import.meta.url));
 
@@ -24,6 +25,7 @@ export function buildApp({ db, startRun, scenariosDir = DEFAULT_SCENARIOS_DIR })
 
   // публічні роути — без перевірки сесії
   app.register(authRoutes, { prefix: "/api", db });
+  app.register(inviteRoutes, { prefix: "/api", db });
 
   // захищені роути — preHandler перевіряє сесію
   app.register(async (instance) => {
@@ -37,6 +39,7 @@ export function buildApp({ db, startRun, scenariosDir = DEFAULT_SCENARIOS_DIR })
     instance.register(runsRoutes, { prefix: "/api", db, startRun });
     instance.register(scenariosRoutes, { prefix: "/api", scenariosDir });
     instance.register(usersRoutes, { prefix: "/api", db });
+    instance.register(adminsRoutes, { prefix: "/api", db });
   });
 
   return app;

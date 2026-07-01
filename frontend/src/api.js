@@ -29,4 +29,12 @@ export const api = {
   getScenarios:   ()               => request('GET',  '/api/scenarios').then(r => r?.json() ?? []),
   createScenario: (data)           => request('POST', '/api/scenarios', data),
   deleteScenario: (name)           => request('DELETE', `/api/scenarios/${encodeURIComponent(name)}`),
+  getAdmins:      ()               => request('GET',  '/api/admins').then(r => r?.json() ?? []),
+  inviteAdmin:    (email)          => request('POST', '/api/admins/invite', { email }),
+  getInvite:      (token)          => fetch(`${BASE}/api/invite/${token}`).then(r => r.ok ? r.json() : null),
+  acceptInvite:   (token, password) => fetch(`${BASE}/api/invite/${token}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password }),
+  }).then(r => r.json()),
 }

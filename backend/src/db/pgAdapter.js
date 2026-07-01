@@ -129,6 +129,46 @@ export function createPgAdapter(pool) {
       )
     },
 
+    async getAdmins() {
+      const { rows } = await pool.query(
+        `SELECT id, email, created_at AS "createdAt" FROM admin_users ORDER BY created_at ASC`
+      );
+      return rows;
+    },
+
+    async createAdmin({ email, password }) {
+      const { rows } = await pool.query(
+        `INSERT INTO admin_users (email, password) VALUES ($1, $2)
+         RETURNING id, email, created_at AS "createdAt"`,
+        [email, password]
+      );
+      return rows[0];
+    },
+
+    async createInvite({ token, email, invitedBy, expiresAt }) {
+      await pool.query(
+        `INSERT INTO admin_invites (token, email, invited_by, expires_at) VALUES ($1, $2, $3, $4)`,
+        [token, email, invitedBy, expiresAt]
+      );
+    },
+
+    async findInvite(token) {
+      const { rows } = await pool.query(
+        `SELECT id, email, expires_at AS "expiresAt", used_at AS "usedAt"
+         FROM admin_invites
+         WHERE token = $1 AND used_at IS NULL AND expires_at > now()`,
+        [token]
+      );
+      return rows[0] ?? null;
+    },
+
+    async useInvite(token) {
+      await pool.query(
+        `UPDATE admin_invites SET used_at = now() WHERE token = $1`,
+        [token]
+      );
+    },
+
     async createRun({ scenario, concurrency, targetUrl, usersCount = null }) {
       const { rows } = await pool.query(
         `INSERT INTO test_runs (scenario, concurrency, target_url, users_count, status)
