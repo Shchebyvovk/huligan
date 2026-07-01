@@ -92,10 +92,10 @@ Prefix mapping: `fix:` → patch, `feat:` → minor, `BREAKING CHANGE` → major
 
 ## TODO
 
-- **`register` scenario step** — add `register` action to DSL (alongside `login`). After a successful `register` step, mark the user as registered in the target app (add targetUrl to `registered_in` in `test_users`). Currently only `login` exists; `register` deferred until the user pool feature is stable.
-- **Live run progress** — show real-time progress bar while run is `running` (poll GET /api/runs/:id every second)
-- **Latency chart** — visualize per-step latency after run completes (SVG, no external libs)
-- **Persistent scenario storage** — uploaded scenarios lost on Render redeploy; consider S3 or Neon blob
+- **Система ролей і дозволів** — різні рівні доступу для адмінів (наприклад: superadmin, viewer)
+- **Порівняння двох ранів** — side-by-side latency chart між двома runs (для аналізу "до/після деплою")
+- **Ramp-up** — поступове збільшення навантаження (0→N юзерів за заданий час) замість одночасного старту всіх
+- **Scheduled runs** — запуск тесту по розкладу (cron), корисно для нічного регресійного моніторингу
 
 ## Architecture Decision Records
 

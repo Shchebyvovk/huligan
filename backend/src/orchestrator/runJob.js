@@ -72,6 +72,7 @@ export async function runJob({ run, db, makeClient, steps, maxParallel = 200 }) 
   const allResults = await orchestrate({
     users: allUsers,
     concurrency: Math.min(run.concurrency, maxParallel),
+    rampUpMs: run.rampUpMs ?? 0,
     worker: userIndex => {
       const user = userPool ? userPool[userIndex % userPool.length] : undefined
       return runScenario(_steps, _makeClient(userIndex), user)

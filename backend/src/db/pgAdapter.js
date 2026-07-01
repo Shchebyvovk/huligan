@@ -30,7 +30,7 @@ export function createPgAdapter(pool) {
     async getRuns() {
       const { rows } = await pool.query(
         `SELECT id, scenario, concurrency, target_url AS "targetUrl", status, results,
-                completed_count AS "completedCount", created_at AS "createdAt"
+                completed_count AS "completedCount", ramp_up_ms AS "rampUpMs", created_at AS "createdAt"
          FROM test_runs ORDER BY created_at DESC`
       );
       return rows;
@@ -39,7 +39,7 @@ export function createPgAdapter(pool) {
     async getRunById(id) {
       const { rows } = await pool.query(
         `SELECT id, scenario, concurrency, target_url AS "targetUrl", status, results,
-                completed_count AS "completedCount", created_at AS "createdAt"
+                completed_count AS "completedCount", ramp_up_ms AS "rampUpMs", created_at AS "createdAt"
          FROM test_runs WHERE id = $1`,
         [id]
       );
@@ -222,13 +222,13 @@ export function createPgAdapter(pool) {
       return rowCount > 0;
     },
 
-    async createRun({ scenario, concurrency, targetUrl, usersCount = null }) {
+    async createRun({ scenario, concurrency, targetUrl, usersCount = null, rampUpMs = 0 }) {
       const { rows } = await pool.query(
-        `INSERT INTO test_runs (scenario, concurrency, target_url, users_count, status)
-         VALUES ($1, $2, $3, $4, $5)
+        `INSERT INTO test_runs (scenario, concurrency, target_url, users_count, ramp_up_ms, status)
+         VALUES ($1, $2, $3, $4, $5, $6)
          RETURNING id, scenario, concurrency, target_url AS "targetUrl",
-                   users_count AS "usersCount", status, created_at AS "createdAt"`,
-        [scenario, concurrency, targetUrl, usersCount, "pending"]
+                   users_count AS "usersCount", ramp_up_ms AS "rampUpMs", status, created_at AS "createdAt"`,
+        [scenario, concurrency, targetUrl, usersCount, rampUpMs, "pending"]
       );
       return rows[0];
     },

@@ -1,4 +1,4 @@
-export async function orchestrate({ users, concurrency, worker, onProgress }) {
+export async function orchestrate({ users, concurrency, worker, onProgress, rampUpMs = 0 }) {
   const results = new Array(users.length);
   let index = 0;
   let completed = 0;
@@ -17,7 +17,12 @@ export async function orchestrate({ users, concurrency, worker, onProgress }) {
   }
 
   const slots = Math.min(concurrency, users.length);
-  await Promise.all(Array.from({ length: slots }, runNext));
+  const delayPerSlot = rampUpMs > 0 ? rampUpMs / slots : 0;
 
+  const promises = Array.from({ length: slots }, (_, i) =>
+    new Promise(res => setTimeout(res, Math.round(delayPerSlot * i))).then(runNext)
+  );
+
+  await Promise.all(promises);
   return results;
 }

@@ -105,7 +105,7 @@ describe("createRun", () => {
     const result = await db.createRun({ scenario: { steps: [] }, concurrency: 10, targetUrl: 'https://t.com' });
     expect(pool.query).toHaveBeenCalledWith(
       expect.stringContaining("test_runs"),
-      [{ steps: [] }, 10, 'https://t.com', null, "pending"]
+      [{ steps: [] }, 10, 'https://t.com', null, 0, "pending"]
     );
     expect(result).toEqual(run);
   });

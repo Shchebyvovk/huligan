@@ -10,6 +10,7 @@ export default function NewRunModal({ onClose }) {
   const [concurrency, setConcurrency] = useState(100)
   const [targetUrl, setTargetUrl] = useState(() => localStorage.getItem('huligan_target_url') ?? '')
   const [usersCount, setUsersCount] = useState('')
+  const [rampUpSec, setRampUpSec] = useState('')
   const [usersStats, setUsersStats] = useState(null)
   const [generating, setGenerating] = useState(false)
   const [generateCount, setGenerateCount] = useState(100)
@@ -119,6 +120,7 @@ export default function NewRunModal({ onClose }) {
         scenario, concurrency: Number(concurrency),
         targetUrl: targetUrl.trim(),
         usersCount: parsedUsersCount,
+        rampUpMs: rampUpSec ? Math.round(Number(rampUpSec) * 1000) : 0,
       })
       if (run) onClose()
     } catch {
@@ -230,16 +232,27 @@ export default function NewRunModal({ onClose }) {
             </div>
           </div>
 
-          {/* Concurrency */}
-          <div className="flex flex-col gap-1">
-            <label className="text-sm text-[var(--c-text-3)]">
-              {t('new_run_users')}
-              <span className="text-[var(--c-text-4)] ml-2">({t('new_run_users_hint')})</span>
-            </label>
-            <input type="number" min={1} max={10000} value={concurrency}
-              onChange={e => setConcurrency(e.target.value)}
-              className="bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-3 py-2 text-[var(--c-text)] text-sm outline-none focus:border-[var(--c-accent-border)] transition-colors"
-            />
+          {/* Concurrency + Ramp-up */}
+          <div className="flex gap-3">
+            <div className="flex flex-col gap-1 flex-1">
+              <label className="text-sm text-[var(--c-text-3)]">
+                {t('new_run_users')}
+              </label>
+              <input type="number" min={1} max={10000} value={concurrency}
+                onChange={e => setConcurrency(e.target.value)}
+                className="bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-3 py-2 text-[var(--c-text)] text-sm outline-none focus:border-[var(--c-accent-border)] transition-colors"
+              />
+            </div>
+            <div className="flex flex-col gap-1 w-28">
+              <label className="text-sm text-[var(--c-text-3)]">
+                Ramp-up, s
+              </label>
+              <input type="number" min={0} max={3600} value={rampUpSec}
+                onChange={e => setRampUpSec(e.target.value)}
+                placeholder="0"
+                className="bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-3 py-2 text-[var(--c-text)] text-sm outline-none focus:border-[var(--c-accent-border)] transition-colors placeholder:text-[var(--c-text-4)]"
+              />
+            </div>
           </div>
         </div>
 

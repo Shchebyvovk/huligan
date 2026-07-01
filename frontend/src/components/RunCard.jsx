@@ -174,7 +174,9 @@ export default function RunCard({ run: initialRun }) {
             )}
           </div>
           <div className="text-xs text-[var(--c-text-4)]">
-            {run.concurrency} {t('runs_users')} · {time}
+            {run.concurrency} {t('runs_users')}
+            {run.rampUpMs > 0 && <span className="ml-1 text-blue-400/70"> ↑{run.rampUpMs / 1000}s</span>}
+            {' · '}{time}
             {run.targetUrl && <span className="ml-2 opacity-60">{run.targetUrl}</span>}
           </div>
           {isActive && (
