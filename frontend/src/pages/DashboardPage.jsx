@@ -8,6 +8,7 @@ import NewRunModal from '../components/NewRunModal'
 import CompareModal from '../components/CompareModal'
 import TrashModal from '../components/TrashModal'
 import ScheduledRunsModal from '../components/ScheduledRunsModal'
+import TrendChart from '../components/TrendChart'
 
 export default function DashboardPage() {
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -132,6 +133,8 @@ export default function DashboardPage() {
             </button>
           </div>
         </div>
+
+        <TrendChart runs={runs} />
 
         {loading ? (
           <p className="text-[var(--c-text-4)] text-sm">{t('runs_loading')}</p>
