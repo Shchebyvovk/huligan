@@ -1,3 +1,10 @@
+## [1.31.1](https://github.com/Shchebyvovk/huligan/compare/v1.31.0...v1.31.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* **notifications:** add error diagnostics to test button ([984870b](https://github.com/Shchebyvovk/huligan/commit/984870ba912ac7f76a6571373f84fb210341c912))
+
 # [1.31.0](https://github.com/Shchebyvovk/huligan/compare/v1.30.1...v1.31.0) (2026-07-01)
 
 
