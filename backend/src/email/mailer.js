@@ -9,7 +9,7 @@ export async function sendInviteEmail({ to, token, frontendUrl }) {
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
-  await resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from: process.env.RESEND_FROM ?? "Huligan <onboarding@resend.dev>",
     to,
     subject: "Запрошення в Huligan Admin",
@@ -17,4 +17,9 @@ export async function sendInviteEmail({ to, token, frontendUrl }) {
 <p><a href="${link}">Встановити пароль →</a></p>
 <p style="color:#999;font-size:12px">Посилання діє 24 години.</p>`,
   });
+  if (error) {
+    console.error("[mailer] Resend error:", JSON.stringify(error));
+    throw new Error(error.message ?? "Email send failed");
+  }
+  console.log("[mailer] sent to", to, "id:", data?.id);
 }
