@@ -1,3 +1,10 @@
+# [1.33.0](https://github.com/Shchebyvovk/huligan/compare/v1.32.0...v1.33.0) (2026-07-01)
+
+
+### Features
+
+* **trend:** widget settings panel (count/metric/scenario), global toggle in settings ([d0245a3](https://github.com/Shchebyvovk/huligan/commit/d0245a3487eea0c0771b9ac9bba8fda5a6a4c02c))
+
 # [1.32.0](https://github.com/Shchebyvovk/huligan/compare/v1.31.2...v1.32.0) (2026-07-01)
 
 
