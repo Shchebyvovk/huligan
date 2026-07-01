@@ -8,14 +8,18 @@ export async function sendInviteEmail({ to, token, frontendUrl }) {
     return;
   }
 
+  const port = Number(process.env.SMTP_PORT ?? 587);
   const transport = nodemailer.createTransport({
     host: process.env.SMTP_HOST ?? "smtp.gmail.com",
-    port: Number(process.env.SMTP_PORT ?? 587),
-    secure: false,
+    port,
+    secure: port === 465,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
   });
 
   const info = await transport.sendMail({

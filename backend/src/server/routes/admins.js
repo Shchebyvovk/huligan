@@ -25,7 +25,10 @@ export async function adminsRoutes(app, { db }) {
     await db.createInvite({ token, email, invitedBy: req.userId, expiresAt });
 
     const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:5173";
-    await sendInviteEmail({ to: email, token, frontendUrl });
+    // fire-and-forget — не блокуємо відповідь
+    sendInviteEmail({ to: email, token, frontendUrl }).catch(err =>
+      console.error("[invite] email failed:", err.message)
+    );
 
     return reply.code(201).send({ ok: true });
   });
