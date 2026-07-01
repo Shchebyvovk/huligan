@@ -20,6 +20,7 @@ export default function DashboardPage() {
   const [compareRuns, setCompareRuns] = useState(null)
   const [scheduledOpen, setScheduledOpen] = useState(false)
   const prevStatus = useRef({})
+  const initialized = useRef(false)
   const t = useT()
 
   async function loadRuns({ silent = false } = {}) {
@@ -30,16 +31,27 @@ export default function DashboardPage() {
       for (const run of data) {
         const prev = prevStatus.current[run.id]
         const isActive = run.status === 'pending' || run.status === 'running'
-        if (prev && prev !== run.status && !isActive) {
+
+        if (initialized.current) {
           const name = run.scenario?.name ?? run.scenario ?? 'Ран'
           const p = run.results?.passed ?? 0
           const tot = run.results?.total ?? 0
-          if (run.status === 'completed') notify(`✓ ${name} завершено`, `${p}/${tot} passed`)
-          else if (run.status === 'partial') notify(`⚠ ${name} частково`, `${p}/${tot} passed`)
-          else if (run.status === 'failed') notify(`✗ ${name} провалено`, `${run.results?.failed ?? 0} помилок`)
+          const shouldNotify =
+            // перехід: бачили як active, тепер завершено
+            (prev && prev !== run.status && !isActive) ||
+            // новий ран що вже завершився між опитуваннями (до 5 хв)
+            (prev === undefined && !isActive && Date.now() - new Date(run.createdAt).getTime() < 5 * 60_000)
+
+          if (shouldNotify) {
+            if (run.status === 'completed') notify(`✓ ${name} завершено`, `${p}/${tot} passed`)
+            else if (run.status === 'partial') notify(`⚠ ${name} частково`, `${p}/${tot} passed`)
+            else if (run.status === 'failed') notify(`✗ ${name} провалено`, `${run.results?.failed ?? 0} помилок`)
+          }
         }
+
         prevStatus.current[run.id] = run.status
       }
+      initialized.current = true
     }
     if (!silent) setLoading(false)
   }
