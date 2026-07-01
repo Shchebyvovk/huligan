@@ -48,7 +48,7 @@ export default {
   settings_max_runs: 'Зберігати ранів',
   settings_max_runs_hint: 'Старі рани видаляються автоматично. За замовчуванням: 100.',
   settings_trash_days: 'Зберігати в кошику, днів',
-  settings_trash_days_hint: 'Після цього рани видаляються назавжди. За замовчуванням: 30.',
+  settings_trash_days_hint: 'Після цього рани видаляються назавжди. Від 1 до 90 днів.',
   trash_title: 'Кошик',
   trash_empty: 'Кошик порожній',
   trash_expires: (days) => `${days} дн.`,

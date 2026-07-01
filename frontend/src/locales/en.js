@@ -48,7 +48,7 @@ export default {
   settings_max_runs: 'Keep runs',
   settings_max_runs_hint: 'Older runs are deleted automatically. Default: 100.',
   settings_trash_days: 'Keep in trash, days',
-  settings_trash_days_hint: 'After this runs are permanently deleted. Default: 30.',
+  settings_trash_days_hint: 'After this runs are permanently deleted. 1–90 days.',
   trash_title: 'Trash',
   trash_empty: 'Trash is empty',
   trash_expires: (days) => `${days}d left`,
