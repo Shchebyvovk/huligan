@@ -1,3 +1,10 @@
+# [1.30.0](https://github.com/Shchebyvovk/huligan/compare/v1.29.3...v1.30.0) (2026-07-01)
+
+
+### Features
+
+* **notifications:** browser notifications for run completion, settings toggle ([c997f75](https://github.com/Shchebyvovk/huligan/commit/c997f7503417e68167bd95e604adc6f6b0235b38))
+
 ## [1.29.3](https://github.com/Shchebyvovk/huligan/compare/v1.29.2...v1.29.3) (2026-07-01)
 
 
