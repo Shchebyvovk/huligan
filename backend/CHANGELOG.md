@@ -1,3 +1,10 @@
+## [1.21.3](https://github.com/Shchebyvovk/huligan/compare/v1.21.2...v1.21.3) (2026-07-01)
+
+
+### Bug Fixes
+
+* fire-and-forget email, add SMTP timeouts ([e10b27f](https://github.com/Shchebyvovk/huligan/commit/e10b27f13a8a6fa80190b7044fc83c60d910d79e))
+
 ## [1.21.2](https://github.com/Shchebyvovk/huligan/compare/v1.21.1...v1.21.2) (2026-07-01)
 
 
