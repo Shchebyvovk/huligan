@@ -43,7 +43,6 @@ function windowStats() {
   }
 }
 
-const FAKE_PASSWORD = 'password123'
 
 function delay(min, max) {
   const ms = min + Math.random() * (max - min)
@@ -76,8 +75,7 @@ app.post('/api/login', async (req, reply) => {
     return reply.code(400).send({ message: "email і password обов'язкові" })
   }
 
-  const emailOk = email.endsWith('@test.com') || email.includes('test')
-  if (!emailOk || password !== FAKE_PASSWORD) {
+  if (!password) {
     record('login', Date.now() - start, false)
     return reply.code(401).send({ message: 'Невірні credentials' })
   }
