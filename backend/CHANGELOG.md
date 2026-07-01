@@ -1,3 +1,10 @@
+## [1.21.1](https://github.com/Shchebyvovk/huligan/compare/v1.21.0...v1.21.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* log Resend errors in mailer ([38b2ea6](https://github.com/Shchebyvovk/huligan/commit/38b2ea6f15b4138d8f6fa1747cf6830f9bd148dd))
+
 # [1.21.0](https://github.com/Shchebyvovk/huligan/compare/v1.20.3...v1.21.0) (2026-07-01)
 
 
