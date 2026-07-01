@@ -1,3 +1,10 @@
+# [1.31.0](https://github.com/Shchebyvovk/huligan/compare/v1.30.1...v1.31.0) (2026-07-01)
+
+
+### Features
+
+* **notifications:** add test button in settings ([1bbd585](https://github.com/Shchebyvovk/huligan/commit/1bbd58568beeb650f46f4752e207aa25d4025cf2))
+
 ## [1.30.1](https://github.com/Shchebyvovk/huligan/compare/v1.30.0...v1.30.1) (2026-07-01)
 
 
