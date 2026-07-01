@@ -3,9 +3,13 @@ import { runJob } from "../../orchestrator/runJob.js";
 export async function runsRoutes(app, { db, startRun = runJob }) {
   app.get("/runs", async (req, reply) => {
     const maxRuns = Math.min(Math.max(Number(req.query.maxRuns) || 100, 1), 1000);
-    await db.pruneRuns(maxRuns);
-    const runs = await db.getRuns();
-    reply.send(runs);
+    const trashDays = Math.min(Math.max(Number(req.query.trashDays) || 30, 1), 365);
+    await Promise.all([db.pruneRuns(maxRuns), db.purgeTrash(trashDays)]);
+    reply.send(await db.getRuns());
+  });
+
+  app.get("/runs/trash", async (req, reply) => {
+    reply.send(await db.getTrashedRuns());
   });
 
   app.get("/runs/:id", async (req, reply) => {
@@ -25,5 +29,29 @@ export async function runsRoutes(app, { db, startRun = runJob }) {
     const run = await db.createRun({ scenario, concurrency, targetUrl, usersCount: usersCount ?? null, rampUpMs: rampUpMs ?? 0 });
     reply.code(201).send(run);
     startRun({ run, db }).catch(err => app.log.error(err));
+  });
+
+  app.post("/runs/delete", async (req, reply) => {
+    const { ids } = req.body ?? {};
+    if (!Array.isArray(ids) || ids.length === 0)
+      return reply.code(400).send({ message: "ids обов'язкові" });
+    await db.softDeleteRuns(ids);
+    reply.send({ ok: true });
+  });
+
+  app.post("/runs/restore", async (req, reply) => {
+    const { ids } = req.body ?? {};
+    if (!Array.isArray(ids) || ids.length === 0)
+      return reply.code(400).send({ message: "ids обов'язкові" });
+    await db.restoreRuns(ids);
+    reply.send({ ok: true });
+  });
+
+  app.delete("/runs/trash", async (req, reply) => {
+    const { ids } = req.body ?? {};
+    if (!Array.isArray(ids) || ids.length === 0)
+      return reply.code(400).send({ message: "ids обов'язкові" });
+    await db.hardDeleteRuns(ids);
+    reply.send({ ok: true });
   });
 }

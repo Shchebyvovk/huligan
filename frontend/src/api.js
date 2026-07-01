@@ -17,9 +17,13 @@ async function request(method, path, body) {
 export const api = {
   login:         (email, password) => request('POST', '/api/auth/login', { email, password }),
   logout:        ()                => request('POST', '/api/auth/logout'),
-  getRuns:       (maxRuns = 100)   => request('GET',  `/api/runs?maxRuns=${maxRuns}`).then(r => r?.json() ?? []),
+  getRuns:       (maxRuns = 100, trashDays = 30) => request('GET', `/api/runs?maxRuns=${maxRuns}&trashDays=${trashDays}`).then(r => r?.json() ?? []),
   getRun:        (id)              => request('GET',  `/api/runs/${id}`).then(r => r?.json()),
   createRun:     (data)            => request('POST', '/api/runs', data).then(r => r?.json()),
+  softDeleteRuns: (ids)            => request('POST', '/api/runs/delete', { ids }).then(r => r?.json()),
+  restoreRuns:   (ids)             => request('POST', '/api/runs/restore', { ids }).then(r => r?.json()),
+  hardDeleteRuns: (ids)            => request('DELETE', '/api/runs/trash', { ids }).then(r => r?.json()),
+  getTrashedRuns: ()               => request('GET', '/api/runs/trash').then(r => r?.json() ?? []),
   getUsers:       (params = {})    => {
     const q = new URLSearchParams({ page: 1, limit: 50, ...params }).toString()
     return request('GET', `/api/users?${q}`).then(r => r?.json())

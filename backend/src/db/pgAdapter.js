@@ -31,9 +31,44 @@ export function createPgAdapter(pool) {
       const { rows } = await pool.query(
         `SELECT id, scenario, concurrency, target_url AS "targetUrl", status, results,
                 completed_count AS "completedCount", ramp_up_ms AS "rampUpMs", created_at AS "createdAt"
-         FROM test_runs ORDER BY created_at DESC`
+         FROM test_runs WHERE deleted_at IS NULL ORDER BY created_at DESC`
       );
       return rows;
+    },
+
+    async getTrashedRuns() {
+      const { rows } = await pool.query(
+        `SELECT id, scenario, concurrency, target_url AS "targetUrl", status, results,
+                completed_count AS "completedCount", ramp_up_ms AS "rampUpMs",
+                created_at AS "createdAt", deleted_at AS "deletedAt"
+         FROM test_runs WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC`
+      );
+      return rows;
+    },
+
+    async softDeleteRuns(ids) {
+      await pool.query(
+        `UPDATE test_runs SET deleted_at = now() WHERE id = ANY($1) AND deleted_at IS NULL`,
+        [ids]
+      );
+    },
+
+    async restoreRuns(ids) {
+      await pool.query(
+        `UPDATE test_runs SET deleted_at = NULL WHERE id = ANY($1)`,
+        [ids]
+      );
+    },
+
+    async hardDeleteRuns(ids) {
+      await pool.query(`DELETE FROM test_runs WHERE id = ANY($1)`, [ids]);
+    },
+
+    async purgeTrash(days) {
+      await pool.query(
+        `DELETE FROM test_runs WHERE deleted_at IS NOT NULL AND deleted_at < now() - ($1 || ' days')::interval`,
+        [days]
+      );
     },
 
     async getRunById(id) {
@@ -189,9 +224,11 @@ export function createPgAdapter(pool) {
 
     async pruneRuns(maxRuns) {
       await pool.query(
-        `DELETE FROM test_runs WHERE id NOT IN (
-           SELECT id FROM test_runs ORDER BY created_at DESC LIMIT $1
-         )`,
+        `DELETE FROM test_runs
+         WHERE deleted_at IS NULL
+           AND id NOT IN (
+             SELECT id FROM test_runs WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1
+           )`,
         [maxRuns]
       )
     },

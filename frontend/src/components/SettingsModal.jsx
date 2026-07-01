@@ -19,7 +19,9 @@ function Tab({ active, onClick, children }) {
 }
 
 export const MAX_RUNS_KEY = 'huligan_max_runs'
+export const TRASH_DAYS_KEY = 'huligan_trash_days'
 export function getMaxRuns() { return Number(localStorage.getItem(MAX_RUNS_KEY) ?? 100) }
+export function getTrashDays() { return Number(localStorage.getItem(TRASH_DAYS_KEY) ?? 30) }
 
 function AppearanceTab({ onClose }) {
   const t = useT()
@@ -28,12 +30,15 @@ function AppearanceTab({ onClose }) {
   const [selectedLocale, setSelectedLocale] = useState(locale)
   const [selectedTheme, setSelectedTheme] = useState(theme)
   const [maxRuns, setMaxRuns] = useState(() => getMaxRuns())
+  const [trashDays, setTrashDays] = useState(() => getTrashDays())
 
   function handleSave() {
     changeLocale(selectedLocale)
     changeTheme(selectedTheme)
     const val = Math.min(Math.max(Number(maxRuns) || 100, 1), 1000)
     localStorage.setItem(MAX_RUNS_KEY, String(val))
+    const td = Math.min(Math.max(Number(trashDays) || 30, 1), 365)
+    localStorage.setItem(TRASH_DAYS_KEY, String(td))
     onClose()
   }
 
@@ -73,6 +78,16 @@ function AppearanceTab({ onClose }) {
           className="bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-3 py-2 text-[var(--c-text)] text-sm outline-none focus:border-[var(--c-accent-border)] transition-colors"
         />
         <p className="text-xs text-[var(--c-text-4)]">{t('settings_max_runs_hint')}</p>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className="text-sm text-[var(--c-text-3)]">{t('settings_trash_days')}</label>
+        <input
+          type="number" min={1} max={365} value={trashDays}
+          onChange={e => setTrashDays(e.target.value)}
+          className="bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-3 py-2 text-[var(--c-text)] text-sm outline-none focus:border-[var(--c-accent-border)] transition-colors"
+        />
+        <p className="text-xs text-[var(--c-text-4)]">{t('settings_trash_days_hint')}</p>
       </div>
 
       <button

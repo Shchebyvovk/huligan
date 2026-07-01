@@ -18,6 +18,11 @@ const makeDb = () => {
     async findSession(token) { return sessions[token] ?? null; },
     async deleteSession(token) { delete sessions[token]; },
     async pruneRuns() {},
+    async purgeTrash() {},
+    async getTrashedRuns() { return []; },
+    async softDeleteRuns() {},
+    async restoreRuns() {},
+    async hardDeleteRuns() {},
     async getRuns() { return runs; },
     async createRun({ scenario, concurrency, targetUrl }) {
       const run = { id: runs.length + 1, scenario, concurrency, targetUrl, status: "pending" };

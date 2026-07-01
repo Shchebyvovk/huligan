@@ -133,7 +133,7 @@ function ProgressBar({ completed, total }) {
   )
 }
 
-export default function RunCard({ run: initialRun }) {
+export default function RunCard({ run: initialRun, selectable = false, selected = false, onToggle }) {
   const t = useT()
   const { locale } = useLocale()
   const [run, setRun] = useState(initialRun)
@@ -161,7 +161,7 @@ export default function RunCard({ run: initialRun }) {
   const isActive = run.status === 'running' || run.status === 'pending'
 
   return (
-    <div className="bg-[var(--c-surface)] border border-[var(--c-border)] rounded-xl overflow-hidden">
+    <div className={`group bg-[var(--c-surface)] border rounded-xl overflow-hidden transition-colors ${selected ? 'border-[var(--c-accent)]' : 'border-[var(--c-border)]'}`}>
       <div
         className="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-[var(--c-surface-2)] transition-colors"
         onClick={() => r && setExpanded(v => !v)}
@@ -191,6 +191,15 @@ export default function RunCard({ run: initialRun }) {
         <div className="flex items-center gap-3 ml-4">
           <span className="text-xs text-[var(--c-text-4)]">#{run.id}</span>
           {r && <span className="text-[var(--c-text-4)] text-xs">{expanded ? '▲' : '▼'}</span>}
+          {selectable && (
+            <div
+              onClick={e => { e.stopPropagation(); onToggle?.(run.id) }}
+              className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center transition-all cursor-pointer
+                opacity-0 group-hover:opacity-100 ${selected ? '!opacity-100 bg-[var(--c-accent)] border-[var(--c-accent)]' : 'border-[var(--c-border-input)] hover:border-[var(--c-accent)]'}`}
+            >
+              {selected && <span className="text-white text-[10px] leading-none">✓</span>}
+            </div>
+          )}
         </div>
       </div>
 

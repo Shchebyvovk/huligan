@@ -13,6 +13,11 @@ const makeDb = ({ passwordOverride } = {}) => {
     async findSession(token) { return sessions[token] ?? null; },
     async deleteSession(token) { delete sessions[token]; },
     async pruneRuns() {},
+    async purgeTrash() {},
+    async getTrashedRuns() { return []; },
+    async softDeleteRuns() {},
+    async restoreRuns() {},
+    async hardDeleteRuns() {},
     async getRuns() { return []; },
     async createRun(data) { return { id: 1, ...data, status: "pending" }; },
   };
