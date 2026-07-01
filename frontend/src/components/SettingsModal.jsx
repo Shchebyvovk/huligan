@@ -156,7 +156,12 @@ function AppearanceTab({ onClose }) {
           {notifPermission === 'granted' && (
             <button
               type="button"
-              onClick={() => new Notification('Huligan', { body: 'Нотифікації працюють ✓' })}
+              onClick={() => {
+                try {
+                  const n = new Notification('Huligan', { body: 'Нотифікації працюють ✓' })
+                  n.onerror = (e) => alert('Помилка нотифікації: ' + e)
+                } catch(e) { alert('Виняток: ' + e.message) }
+              }}
               className="text-xs text-[var(--c-accent)] hover:underline cursor-pointer"
             >
               Тест
