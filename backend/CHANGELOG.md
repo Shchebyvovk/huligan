@@ -1,3 +1,10 @@
+## [1.28.1](https://github.com/Shchebyvovk/huligan/compare/v1.28.0...v1.28.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* **compare:** align summary stats to left/right columns ([dd062b7](https://github.com/Shchebyvovk/huligan/commit/dd062b736fab2ca3b2fbf70039d60144d5b7162b))
+
 # [1.28.0](https://github.com/Shchebyvovk/huligan/compare/v1.27.0...v1.28.0) (2026-07-01)
 
 
