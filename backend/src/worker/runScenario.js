@@ -21,7 +21,7 @@ export async function runScenario(steps, client, user) {
       const ms = await HANDLERS[step.action](client, payload);
       results.push({ action: step.action, ok: true, ms: ms ?? 0 });
     } catch (err) {
-      results.push({ action: step.action, ok: false, ms: 0, error: err.message });
+      results.push({ action: step.action, ok: false, ms: err.ms ?? 0, error: err.message });
       break;
     }
   }
