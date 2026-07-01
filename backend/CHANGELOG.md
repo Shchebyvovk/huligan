@@ -1,3 +1,10 @@
+## [1.29.2](https://github.com/Shchebyvovk/huligan/compare/v1.29.1...v1.29.2) (2026-07-01)
+
+
+### Bug Fixes
+
+* **retry:** exponential backoff with jitter for 429/502/503, max 3 retries ([b9e1a79](https://github.com/Shchebyvovk/huligan/commit/b9e1a798c6342cd742373872a93fb96d559f3d23))
+
 ## [1.29.1](https://github.com/Shchebyvovk/huligan/compare/v1.29.0...v1.29.1) (2026-07-01)
 
 
