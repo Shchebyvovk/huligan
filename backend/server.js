@@ -4,6 +4,8 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildApp } from "./src/server/index.js";
 import { createPgAdapter } from "./src/db/pgAdapter.js";
+import { startScheduler } from "./src/scheduler/scheduler.js";
+import { runJob } from "./src/orchestrator/runJob.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const { Pool } = pg;
@@ -38,6 +40,7 @@ async function start() {
 
   const db = createPgAdapter(pool);
   const app = buildApp({ db });
+  startScheduler(db, runJob);
 
   app.listen({ port: process.env.PORT ?? 3000, host: "0.0.0.0" }, (err, address) => {
     if (err) { console.error(err); process.exit(1); }

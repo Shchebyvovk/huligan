@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react'
 import { api } from '../api'
 import { useT } from '../i18n'
 import AppHeader from '../components/AppHeader'
-import SettingsModal, { getMaxRuns, getTrashDays } from '../components/SettingsModal'
+import SettingsModal, { getMaxRuns, getTrashDays, getKeepaliveUrl } from '../components/SettingsModal'
 import RunCard from '../components/RunCard'
 import NewRunModal from '../components/NewRunModal'
 import CompareModal from '../components/CompareModal'
 import TrashModal from '../components/TrashModal'
+import ScheduledRunsModal from '../components/ScheduledRunsModal'
 
 export default function DashboardPage() {
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -17,6 +18,7 @@ export default function DashboardPage() {
   const [selected, setSelected] = useState(new Set())
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   const [compareRuns, setCompareRuns] = useState(null)
+  const [scheduledOpen, setScheduledOpen] = useState(false)
   const t = useT()
 
   async function loadRuns({ silent = false } = {}) {
@@ -27,6 +29,16 @@ export default function DashboardPage() {
   }
 
   useEffect(() => { loadRuns() }, [])
+
+  useEffect(() => {
+    function ping() {
+      const url = getKeepaliveUrl()
+      if (url) fetch(url, { mode: 'no-cors' }).catch(() => {})
+    }
+    ping()
+    const id = setInterval(ping, 10 * 60 * 1000)
+    return () => clearInterval(id)
+  }, [])
 
   useEffect(() => {
     const hasActiveRun = runs.some(r => r.status === 'pending' || r.status === 'running')
@@ -65,6 +77,13 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-medium">{t('runs_title')}</h2>
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setScheduledOpen(true)}
+              className="text-sm text-[var(--c-text-4)] hover:text-[var(--c-text)] transition-colors cursor-pointer"
+              title="Заплановані запуски"
+            >
+              📅
+            </button>
             <button
               onClick={() => setTrashOpen(true)}
               className="text-sm text-[var(--c-text-4)] hover:text-[var(--c-text)] transition-colors cursor-pointer"
@@ -146,6 +165,7 @@ export default function DashboardPage() {
       {newRunOpen && <NewRunModal onClose={() => { setNewRunOpen(false); loadRuns() }} />}
       {trashOpen && <TrashModal onClose={() => setTrashOpen(false)} onRestored={() => { setTrashOpen(false); loadRuns() }} />}
       {compareRuns && <CompareModal runA={compareRuns[0]} runB={compareRuns[1]} onClose={() => setCompareRuns(null)} />}
+      {scheduledOpen && <ScheduledRunsModal onClose={() => setScheduledOpen(false)} />}
     </div>
   )
 }

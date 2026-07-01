@@ -268,6 +268,72 @@ export function createPgAdapter(pool) {
       return rowCount > 0;
     },
 
+    async getScheduledRuns() {
+      const { rows } = await pool.query('SELECT * FROM scheduled_runs ORDER BY next_run_at ASC')
+      return rows.map(r => ({
+        id: r.id,
+        scenarioName: r.scenario_name,
+        targetUrl: r.target_url,
+        concurrency: r.concurrency,
+        rampUpMs: r.ramp_up_ms,
+        usersCount: r.users_count,
+        scheduledAt: r.scheduled_at,
+        repeatIntervalMs: r.repeat_interval_ms,
+        maxIterations: r.max_iterations,
+        iterationsDone: r.iterations_done,
+        lastRunAt: r.last_run_at,
+        nextRunAt: r.next_run_at,
+        active: r.active,
+        createdAt: r.created_at,
+      }))
+    },
+
+    async createScheduledRun({ scenarioName, targetUrl, concurrency, rampUpMs, usersCount, scheduledAt, repeatIntervalMs, maxIterations }) {
+      const { rows } = await pool.query(
+        `INSERT INTO scheduled_runs (scenario_name, target_url, concurrency, ramp_up_ms, users_count, scheduled_at, repeat_interval_ms, max_iterations, next_run_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$6) RETURNING *`,
+        [scenarioName, targetUrl, concurrency, rampUpMs ?? 0, usersCount ?? null, scheduledAt, repeatIntervalMs ?? null, maxIterations ?? null]
+      )
+      const r = rows[0]
+      return { id: r.id, scenarioName: r.scenario_name, targetUrl: r.target_url, concurrency: r.concurrency, rampUpMs: r.ramp_up_ms, usersCount: r.users_count, scheduledAt: r.scheduled_at, repeatIntervalMs: r.repeat_interval_ms, maxIterations: r.max_iterations, iterationsDone: r.iterations_done, lastRunAt: r.last_run_at, nextRunAt: r.next_run_at, active: r.active, createdAt: r.created_at }
+    },
+
+    async deleteScheduledRun(id) {
+      await pool.query('DELETE FROM scheduled_runs WHERE id = $1', [id])
+    },
+
+    async toggleScheduledRun(id, active) {
+      await pool.query('UPDATE scheduled_runs SET active = $1 WHERE id = $2', [active, id])
+    },
+
+    async getDueScheduledRuns() {
+      const { rows } = await pool.query(
+        `SELECT * FROM scheduled_runs WHERE active = TRUE AND next_run_at <= NOW() AND (max_iterations IS NULL OR iterations_done < max_iterations)`
+      )
+      return rows.map(r => ({
+        id: r.id, scenarioName: r.scenario_name, targetUrl: r.target_url,
+        concurrency: r.concurrency, rampUpMs: r.ramp_up_ms, usersCount: r.users_count,
+        repeatIntervalMs: r.repeat_interval_ms, maxIterations: r.max_iterations,
+        iterationsDone: r.iterations_done,
+      }))
+    },
+
+    async markScheduledRunFired(id, repeatIntervalMs, maxIterations, iterationsDone) {
+      const nextIterations = iterationsDone + 1
+      const isDone = maxIterations !== null && nextIterations >= maxIterations
+      if (repeatIntervalMs && !isDone) {
+        await pool.query(
+          `UPDATE scheduled_runs SET last_run_at = NOW(), next_run_at = NOW() + ($1 || ' milliseconds')::INTERVAL, iterations_done = $2 WHERE id = $3`,
+          [repeatIntervalMs, nextIterations, id]
+        )
+      } else {
+        await pool.query(
+          `UPDATE scheduled_runs SET last_run_at = NOW(), active = FALSE, iterations_done = $1 WHERE id = $2`,
+          [nextIterations, id]
+        )
+      }
+    },
+
     async createRun({ scenario, concurrency, targetUrl, usersCount = null, rampUpMs = 0 }) {
       const { rows } = await pool.query(
         `INSERT INTO test_runs (scenario, concurrency, target_url, users_count, ramp_up_ms, status)

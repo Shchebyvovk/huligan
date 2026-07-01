@@ -7,6 +7,7 @@ import { runsRoutes } from "./routes/runs.js";
 import { scenariosRoutes } from "./routes/scenarios.js";
 import { usersRoutes } from "./routes/users.js";
 import { adminsRoutes, inviteRoutes } from "./routes/admins.js";
+import { scheduledRoutes } from "./routes/scheduled.js";
 
 export function buildApp({ db, startRun }) {
   const app = Fastify({ logger: false });
@@ -37,6 +38,7 @@ export function buildApp({ db, startRun }) {
     instance.register(scenariosRoutes, { prefix: "/api", db });
     instance.register(usersRoutes, { prefix: "/api", db });
     instance.register(adminsRoutes, { prefix: "/api", db });
+    instance.register(scheduledRoutes, { prefix: "/api", db });
   });
 
   return app;
