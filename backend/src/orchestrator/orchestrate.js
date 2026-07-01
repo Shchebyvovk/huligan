@@ -2,10 +2,19 @@ export async function orchestrate({ users, concurrency, worker, onProgress, ramp
   const results = new Array(users.length);
   let index = 0;
   let completed = 0;
+  const startTime = Date.now();
 
   async function runNext() {
     while (index < users.length) {
       const i = index++;
+
+      // Ramp-up: user i повинен стартувати не раніше ніж (i / total) * rampUpMs
+      if (rampUpMs > 0) {
+        const targetMs = Math.round((i / users.length) * rampUpMs);
+        const wait = targetMs - (Date.now() - startTime);
+        if (wait > 0) await new Promise(res => setTimeout(res, wait));
+      }
+
       try {
         results[i] = await worker(users[i]);
       } catch (err) {
@@ -17,12 +26,6 @@ export async function orchestrate({ users, concurrency, worker, onProgress, ramp
   }
 
   const slots = Math.min(concurrency, users.length);
-  const delayPerSlot = rampUpMs > 0 ? rampUpMs / slots : 0;
-
-  const promises = Array.from({ length: slots }, (_, i) =>
-    new Promise(res => setTimeout(res, Math.round(delayPerSlot * i))).then(runNext)
-  );
-
-  await Promise.all(promises);
+  await Promise.all(Array.from({ length: slots }, runNext));
   return results;
 }

@@ -68,6 +68,8 @@ export default {
   new_run_users_pool: 'Пул юзерів з БД',
   new_run_users_fresh: (fresh, total) => `${fresh} вільних з ${total}`,
   new_run_users_pool_hint: 'кількість (порожньо = зі сценарію)',
+  new_run_ramp_up: 'Розгін, сек',
+  new_run_ramp_up_tooltip: 'Плавний старт: юзери додаються поступово протягом вказаного часу. 0 або порожньо = всі стартують одразу.',
   new_run_generate_users: 'Згенерувати юзерів',
   new_run_generating: 'Генерація...',
   new_run_error_generate: 'Не вдалося згенерувати юзерів',

@@ -244,8 +244,12 @@ export default function NewRunModal({ onClose }) {
               />
             </div>
             <div className="flex flex-col gap-1 w-28">
-              <label className="text-sm text-[var(--c-text-3)]">
-                Ramp-up, s
+              <label className="text-sm text-[var(--c-text-3)] flex items-center gap-1">
+                {t('new_run_ramp_up')}
+                <span
+                  title={t('new_run_ramp_up_tooltip')}
+                  className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-[var(--c-text-4)] text-[var(--c-text-4)] text-[9px] cursor-help leading-none"
+                >?</span>
               </label>
               <input type="number" min={0} max={3600} value={rampUpSec}
                 onChange={e => setRampUpSec(e.target.value)}

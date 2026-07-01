@@ -68,6 +68,8 @@ export default {
   new_run_users_pool: 'Users pool from DB',
   new_run_users_fresh: (fresh, total) => `${fresh} fresh of ${total}`,
   new_run_users_pool_hint: 'count (empty = from scenario)',
+  new_run_ramp_up: 'Ramp-up, sec',
+  new_run_ramp_up_tooltip: 'Gradual start: users are added one by one over the given time. 0 or empty = all start at once.',
   new_run_generate_users: 'Generate users',
   new_run_generating: 'Generating...',
   new_run_error_generate: 'Failed to generate users',
