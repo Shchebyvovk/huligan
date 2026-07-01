@@ -1,3 +1,10 @@
+# [1.25.0](https://github.com/Shchebyvovk/huligan/compare/v1.24.0...v1.25.0) (2026-07-01)
+
+
+### Features
+
+* register scenario step + scenario editor docs panel ([16d4dca](https://github.com/Shchebyvovk/huligan/commit/16d4dcabbe8b2bcd242273de2055a4348e611106))
+
 # [1.24.0](https://github.com/Shchebyvovk/huligan/compare/v1.23.0...v1.24.0) (2026-07-01)
 
 
