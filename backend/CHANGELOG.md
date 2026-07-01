@@ -1,3 +1,10 @@
+# [1.26.0](https://github.com/Shchebyvovk/huligan/compare/v1.25.0...v1.26.0) (2026-07-01)
+
+
+### Features
+
+* ramp-up support for load test runs ([7202b85](https://github.com/Shchebyvovk/huligan/commit/7202b852e938a232360c114a25e55a0411136079))
+
 # [1.25.0](https://github.com/Shchebyvovk/huligan/compare/v1.24.0...v1.25.0) (2026-07-01)
 
 
