@@ -1,3 +1,10 @@
+## [1.26.2](https://github.com/Shchebyvovk/huligan/compare/v1.26.1...v1.26.2) (2026-07-01)
+
+
+### Bug Fixes
+
+* record actual ms for failed requests + retry on 429/502/503 ([0d90fa9](https://github.com/Shchebyvovk/huligan/commit/0d90fa9d31f5bec94ba5e78647dd6589daaa40a3))
+
 ## [1.26.1](https://github.com/Shchebyvovk/huligan/compare/v1.26.0...v1.26.1) (2026-07-01)
 
 
