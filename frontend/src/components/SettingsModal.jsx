@@ -149,9 +149,20 @@ function AppearanceTab({ onClose }) {
             </button>
           )}
         </div>
-        <p className="text-xs text-[var(--c-text-4)]">
-          {notifPermission === 'granted' ? '✓ Дозволено браузером' : notifPermission === 'denied' ? '✗ Заблоковано — змініть у налаштуваннях браузера' : 'Потрібен дозвіл браузера'}
-        </p>
+        <div className="flex items-center gap-3">
+          <p className="text-xs text-[var(--c-text-4)]">
+            {notifPermission === 'granted' ? '✓ Дозволено' : notifPermission === 'denied' ? '✗ Заблоковано браузером' : 'Потрібен дозвіл'}
+          </p>
+          {notifPermission === 'granted' && (
+            <button
+              type="button"
+              onClick={() => new Notification('Huligan', { body: 'Нотифікації працюють ✓' })}
+              className="text-xs text-[var(--c-accent)] hover:underline cursor-pointer"
+            >
+              Тест
+            </button>
+          )}
+        </div>
       </div>
 
       <button
