@@ -17,6 +17,7 @@ const makeDb = () => {
     async createSession({ token, userId, expiresAt }) { sessions[token] = { userId, expiresAt }; },
     async findSession(token) { return sessions[token] ?? null; },
     async deleteSession(token) { delete sessions[token]; },
+    async pruneRuns() {},
     async getRuns() { return runs; },
     async createRun({ scenario, concurrency, targetUrl }) {
       const run = { id: runs.length + 1, scenario, concurrency, targetUrl, status: "pending" };

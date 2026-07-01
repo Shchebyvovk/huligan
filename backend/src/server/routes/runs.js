@@ -2,6 +2,8 @@ import { runJob } from "../../orchestrator/runJob.js";
 
 export async function runsRoutes(app, { db, startRun = runJob }) {
   app.get("/runs", async (req, reply) => {
+    const maxRuns = Math.min(Math.max(Number(req.query.maxRuns) || 100, 1), 1000);
+    await db.pruneRuns(maxRuns);
     const runs = await db.getRuns();
     reply.send(runs);
   });

@@ -86,8 +86,11 @@ export async function runJob({ run, db, makeClient, steps, maxParallel = 200 }) 
   })
 
   const results = aggregateResults(allResults)
-  const failed = results.failed > 0
-  await db.updateRunStatus(run.id, failed ? "failed" : "completed", results)
+  let finalStatus
+  if (results.failed === 0) finalStatus = 'completed'
+  else if (results.passed >= results.failed) finalStatus = 'partial'
+  else finalStatus = 'failed'
+  await db.updateRunStatus(run.id, finalStatus, results)
 
   // Позначаємо юзерів як зареєстрованих у цьому додатку
   if (pickedUserIds.length > 0 && db.markUsersRegistered) {

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { api } from '../api'
 import { useT } from '../i18n'
 import AppHeader from '../components/AppHeader'
-import SettingsModal from '../components/SettingsModal'
+import SettingsModal, { getMaxRuns } from '../components/SettingsModal'
 import RunCard from '../components/RunCard'
 import NewRunModal from '../components/NewRunModal'
 
@@ -15,7 +15,7 @@ export default function DashboardPage() {
 
   async function loadRuns({ silent = false } = {}) {
     if (!silent) setLoading(true)
-    const data = await api.getRuns()
+    const data = await api.getRuns(getMaxRuns())
     if (data) setRuns(data)
     if (!silent) setLoading(false)
   }

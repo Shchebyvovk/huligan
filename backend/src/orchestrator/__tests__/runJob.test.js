@@ -38,7 +38,7 @@ describe("runJob", () => {
 
     await runJob({ run: { id: 1, concurrency: 3 }, db, makeClient: flakyClient, steps: STEPS });
 
-    expect(db.updateRunStatus).toHaveBeenNthCalledWith(2, 1, "failed", expect.objectContaining({
+    expect(db.updateRunStatus).toHaveBeenNthCalledWith(2, 1, "partial", expect.objectContaining({
       failed: 1,
     }));
   });

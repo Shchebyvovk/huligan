@@ -12,6 +12,7 @@ const makeDb = ({ passwordOverride } = {}) => {
     async createSession({ token, userId, expiresAt }) { sessions[token] = { userId, expiresAt }; },
     async findSession(token) { return sessions[token] ?? null; },
     async deleteSession(token) { delete sessions[token]; },
+    async pruneRuns() {},
     async getRuns() { return []; },
     async createRun(data) { return { id: 1, ...data, status: "pending" }; },
   };

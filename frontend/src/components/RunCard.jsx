@@ -5,8 +5,13 @@ import { api } from '../api'
 const STATUS_STYLES = {
   running:   'bg-blue-500/20 text-blue-300',
   completed: 'bg-green-500/20 text-green-300',
+  partial:   'bg-yellow-500/20 text-yellow-300',
   failed:    'bg-red-500/20 text-red-300',
   pending:   'bg-gray-500/20 text-gray-400',
+}
+
+const STATUS_LABELS = {
+  partial: 'partial ⚠',
 }
 
 function LatencyChart({ steps }) {
@@ -165,7 +170,7 @@ export default function RunCard({ run: initialRun }) {
           <div className="flex items-center gap-3 mb-1">
             <span className="font-medium text-sm text-[var(--c-text)]">{scenarioName}</span>
             <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${badge}`}>
-              {run.status}
+              {STATUS_LABELS[run.status] ?? run.status}
             </span>
             {r && (
               <span className="text-xs text-[var(--c-text-3)]">

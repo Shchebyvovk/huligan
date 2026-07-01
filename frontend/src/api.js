@@ -17,7 +17,7 @@ async function request(method, path, body) {
 export const api = {
   login:         (email, password) => request('POST', '/api/auth/login', { email, password }),
   logout:        ()                => request('POST', '/api/auth/logout'),
-  getRuns:       ()                => request('GET',  '/api/runs').then(r => r?.json() ?? []),
+  getRuns:       (maxRuns = 100)   => request('GET',  `/api/runs?maxRuns=${maxRuns}`).then(r => r?.json() ?? []),
   getRun:        (id)              => request('GET',  `/api/runs/${id}`).then(r => r?.json()),
   createRun:     (data)            => request('POST', '/api/runs', data).then(r => r?.json()),
   getUsers:       (params = {})    => {

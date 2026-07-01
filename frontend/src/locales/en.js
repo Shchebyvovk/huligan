@@ -45,6 +45,8 @@ export default {
   settings_theme: 'Theme',
   settings_language: 'Language',
   settings_save: 'Save',
+  settings_max_runs: 'Keep runs',
+  settings_max_runs_hint: 'Older runs are deleted automatically. Default: 100.',
 
   // NewRunModal
   new_run_title: 'New run',

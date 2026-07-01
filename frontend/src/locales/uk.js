@@ -45,6 +45,8 @@ export default {
   settings_theme: 'Тема',
   settings_language: 'Мова',
   settings_save: 'Зберегти',
+  settings_max_runs: 'Зберігати ранів',
+  settings_max_runs_hint: 'Старі рани видаляються автоматично. За замовчуванням: 100.',
 
   // NewRunModal
   new_run_title: 'Новий ран',

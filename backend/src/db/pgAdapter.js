@@ -187,6 +187,15 @@ export function createPgAdapter(pool) {
       );
     },
 
+    async pruneRuns(maxRuns) {
+      await pool.query(
+        `DELETE FROM test_runs WHERE id NOT IN (
+           SELECT id FROM test_runs ORDER BY created_at DESC LIMIT $1
+         )`,
+        [maxRuns]
+      )
+    },
+
     async getScenarios() {
       const { rows } = await pool.query(
         `SELECT id, name, steps, users, created_at AS "createdAt"
