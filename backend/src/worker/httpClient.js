@@ -18,6 +18,14 @@ export function makeHttpClient(baseUrl, { fetch: _fetch = globalThis.fetch } = {
   }
 
   return {
+    async register(payload) {
+      const ms = await timed(async () => {
+        const res = await post('/api/register', payload)
+        cookie = res.headers.get('set-cookie') ?? ''
+      })
+      return ms
+    },
+
     async login(payload) {
       const ms = await timed(async () => {
         const res = await post('/api/login', payload)

@@ -1,4 +1,8 @@
 const STEP_VALIDATORS = {
+  register(payload, hasUserPool) {
+    if (!hasUserPool && (!payload?.email || !payload?.password))
+      throw new Error("register: payload must have email and password (or define users pool)");
+  },
   login(payload, hasUserPool) {
     if (!hasUserPool && (!payload?.email || !payload?.password))
       throw new Error("login: payload must have email and password (or define users pool)");

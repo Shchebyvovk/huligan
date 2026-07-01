@@ -12,6 +12,15 @@ const DEFAULT_STEPS = JSON.stringify(
   null, 2
 )
 
+const DEFAULT_STEPS_REGISTER = JSON.stringify(
+  [
+    { action: "register" },
+    { action: "send_message", payload: { text: "hello" } },
+    { action: "logout" },
+  ],
+  null, 2
+)
+
 const DEFAULT_USERS = [
   { email: 'user1@test.com', password: 'password123' },
   { email: 'user2@test.com', password: 'password123' },
@@ -158,6 +167,7 @@ export default function ScenarioEditorModal({ onClose, onSaved }) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [aiOpen, setAiOpen] = useState(false)
+  const [docsOpen, setDocsOpen] = useState(false)
 
   useEffect(() => {
     setValidationOk(false)
@@ -170,11 +180,11 @@ export default function ScenarioEditorModal({ onClose, onSaved }) {
       if (!Array.isArray(steps) || steps.length === 0) {
         setValidationMsg(t('editor_validation_array')); setValidationOk(false); return
       }
-      const actions = ['login', 'send_message', 'wait', 'logout']
+      const actions = ['register', 'login', 'send_message', 'wait', 'logout']
       for (const [i, step] of steps.entries()) {
         if (!step.action) { setValidationMsg(t('editor_validation_no_action', i)); setValidationOk(false); return }
         if (!actions.includes(step.action)) { setValidationMsg(t('editor_validation_unknown', i, step.action)); setValidationOk(false); return }
-        if (step.action === 'login' && !usePool && (!step.payload?.email || !step.payload?.password)) {
+        if (['login', 'register'].includes(step.action) && !usePool && (!step.payload?.email || !step.payload?.password)) {
           setValidationMsg(t('editor_validation_login', i)); setValidationOk(false); return
         }
         if (step.action === 'send_message' && !step.payload?.text) {
@@ -268,14 +278,55 @@ export default function ScenarioEditorModal({ onClose, onSaved }) {
             <div className="flex items-center justify-between">
               <label className="text-sm text-[var(--c-text-3)]">{t('editor_steps')}</label>
               <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setContent(DEFAULT_STEPS_REGISTER)}
+                  className="text-xs text-[var(--c-text-4)] hover:text-[var(--c-text-2)] transition-colors cursor-pointer"
+                >
+                  register template
+                </button>
                 <button onClick={() => setAiOpen(v => !v)} className="text-xs text-[var(--c-accent)] hover:text-[var(--c-accent-hover)] transition-colors cursor-pointer">
                   {t('editor_ai')}
                 </button>
                 <button onClick={validate} className="text-xs text-[var(--c-text-3)] hover:text-[var(--c-text)] transition-colors cursor-pointer">
                   {t('editor_validate')}
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setDocsOpen(v => !v)}
+                  className="text-xs text-[var(--c-text-4)] hover:text-[var(--c-text-2)] transition-colors cursor-pointer"
+                  title="Довідка по кроках"
+                >
+                  ?
+                </button>
               </div>
             </div>
+
+            {docsOpen && (
+              <div className="bg-[var(--c-bg)] border border-[var(--c-border)] rounded-lg p-4 text-xs text-[var(--c-text-3)] font-mono leading-relaxed">
+                <p className="text-[var(--c-text-2)] font-sans font-medium mb-2 not-mono">Доступні дії (action)</p>
+                <div className="flex flex-col gap-2">
+                  <div><span className="text-green-400">register</span> — реєстрація нового юзера. Payload: <span className="text-yellow-300">{`{ email, password }`}</span> або з пулу.</div>
+                  <div><span className="text-green-400">login</span> — вхід в систему. Payload: <span className="text-yellow-300">{`{ email, password }`}</span> або з пулу.</div>
+                  <div><span className="text-green-400">send_message</span> — відправити повідомлення. Payload: <span className="text-yellow-300">{`{ text: "..." }`}</span></div>
+                  <div><span className="text-green-400">wait</span> — пауза. Payload: <span className="text-yellow-300">{`{ ms: 500 }`}</span></div>
+                  <div><span className="text-green-400">logout</span> — вихід. Payload не потрібен.</div>
+                </div>
+                <p className="text-[var(--c-text-2)] font-sans font-medium mt-3 mb-1 not-mono">Приклад — реєстрація</p>
+                <pre className="text-[var(--c-text-3)] whitespace-pre-wrap">{`[
+  { "action": "register" },
+  { "action": "send_message", "payload": { "text": "hi" } },
+  { "action": "logout" }
+]`}</pre>
+                <p className="text-[var(--c-text-2)] font-sans font-medium mt-3 mb-1 not-mono">Приклад — логін з паузою</p>
+                <pre className="text-[var(--c-text-3)] whitespace-pre-wrap">{`[
+  { "action": "login" },
+  { "action": "wait", "payload": { "ms": 1000 } },
+  { "action": "send_message", "payload": { "text": "hello" } },
+  { "action": "logout" }
+]`}</pre>
+              </div>
+            )}
 
             <textarea
               value={content}

@@ -1,4 +1,5 @@
 const HANDLERS = {
+  register:     (client, payload) => client.register(payload),
   login:        (client, payload) => client.login(payload),
   send_message: (client, payload) => client.sendMessage(payload),
   wait:         (client, payload) => client.wait(payload),
@@ -11,8 +12,9 @@ export async function runScenario(steps, client, user) {
 
   for (const step of steps) {
     try {
-      // login без payload бере credentials з пулу
-      const payload = (step.action === 'login' && !step.payload && user)
+      // register/login без payload беруть credentials з пулу
+      const poolActions = ['register', 'login'];
+      const payload = (poolActions.includes(step.action) && !step.payload && user)
         ? user
         : step.payload;
 

@@ -63,6 +63,29 @@ app.get('/health', async () => ({
   stats: windowStats(),
 }))
 
+// Register
+app.post('/api/register', async (req, reply) => {
+  const start = Date.now()
+  const { email, password } = req.body ?? {}
+
+  await delay(80, 200)
+
+  if (!email || !password) {
+    record('register', Date.now() - start, false)
+    return reply.code(400).send({ message: "email і password обов'язкові" })
+  }
+
+  const token = randomBytes(16).toString('hex')
+  sessions.set(token, { email, createdAt: Date.now() })
+  record('register', Date.now() - start, true)
+  console.log(`[register] ${email} → ok (${Date.now() - start}ms)`)
+
+  reply
+    .header('set-cookie', `session=${token}; HttpOnly; Path=/; SameSite=Lax`)
+    .code(201)
+    .send({ ok: true, email })
+})
+
 // Login
 app.post('/api/login', async (req, reply) => {
   const start = Date.now()
