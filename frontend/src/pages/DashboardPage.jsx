@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { api } from '../api'
 import { useT } from '../i18n'
 import AppHeader from '../components/AppHeader'
@@ -19,7 +19,7 @@ export default function DashboardPage() {
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   const [compareRuns, setCompareRuns] = useState(null)
   const [scheduledOpen, setScheduledOpen] = useState(false)
-  const prevStatusRef = useState(() => ({}))[0]
+  const prevStatus = useRef({})
   const t = useT()
 
   async function loadRuns({ silent = false } = {}) {
@@ -28,21 +28,28 @@ export default function DashboardPage() {
     if (data) {
       setRuns(data)
       for (const run of data) {
-        const prev = prevStatusRef[run.id]
-        const active = run.status === 'pending' || run.status === 'running'
-        if (prev && prev !== run.status && !active) {
-          const scenarioName = run.scenario?.name ?? run.scenario ?? 'Ран'
-          if (run.status === 'completed') notify(`✓ ${scenarioName} завершено`, `${run.results?.passed ?? 0}/${run.results?.total ?? 0} passed`)
-          else if (run.status === 'partial') notify(`⚠ ${scenarioName} частково`, `${run.results?.passed ?? 0}/${run.results?.total ?? 0} passed`)
-          else if (run.status === 'failed') notify(`✗ ${scenarioName} провалено`, `${run.results?.failed ?? 0} помилок`)
+        const prev = prevStatus.current[run.id]
+        const isActive = run.status === 'pending' || run.status === 'running'
+        if (prev && prev !== run.status && !isActive) {
+          const name = run.scenario?.name ?? run.scenario ?? 'Ран'
+          const p = run.results?.passed ?? 0
+          const tot = run.results?.total ?? 0
+          if (run.status === 'completed') notify(`✓ ${name} завершено`, `${p}/${tot} passed`)
+          else if (run.status === 'partial') notify(`⚠ ${name} частково`, `${p}/${tot} passed`)
+          else if (run.status === 'failed') notify(`✗ ${name} провалено`, `${run.results?.failed ?? 0} помилок`)
         }
-        prevStatusRef[run.id] = run.status
+        prevStatus.current[run.id] = run.status
       }
     }
     if (!silent) setLoading(false)
   }
 
-  useEffect(() => { loadRuns() }, [])
+  useEffect(() => {
+    loadRuns()
+    // фоновий поллінг кожні 10с — ловить scheduled runs навіть без активних ранів
+    const bgId = setInterval(() => loadRuns({ silent: true }), 10_000)
+    return () => clearInterval(bgId)
+  }, [])
 
   useEffect(() => {
     function ping() {
