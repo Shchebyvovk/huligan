@@ -1,3 +1,18 @@
+# [1.24.0](https://github.com/Shchebyvovk/huligan/compare/v1.23.0...v1.24.0) (2026-07-01)
+
+
+### Bug Fixes
+
+* target server accepts any email/password ([e3505c2](https://github.com/Shchebyvovk/huligan/commit/e3505c22a3bd7b5f5060099ecbd02e783780aabb))
+
+
+### Features
+
+* latency SVG chart and detailed error breakdown per step ([58128e3](https://github.com/Shchebyvovk/huligan/commit/58128e3232e0dad8d05f4842c299393686e5bc80))
+* live run progress bar ([24cbdd2](https://github.com/Shchebyvovk/huligan/commit/24cbdd2bf0a7e5decd28f59e5fc9745e3ca9f26f))
+* persist scenarios in PostgreSQL instead of ephemeral filesystem ([513a02a](https://github.com/Shchebyvovk/huligan/commit/513a02a2466b4160daed54eca1f7e3afa9d33cc4))
+* show error messages per step in run card ([dfb919c](https://github.com/Shchebyvovk/huligan/commit/dfb919c796616197171a357bf03ae6cc0938453e))
+
 # [1.23.0](https://github.com/Shchebyvovk/huligan/compare/v1.22.0...v1.23.0) (2026-07-01)
 
 
