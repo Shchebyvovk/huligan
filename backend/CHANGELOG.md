@@ -1,3 +1,10 @@
+## [1.28.2](https://github.com/Shchebyvovk/huligan/compare/v1.28.1...v1.28.2) (2026-07-01)
+
+
+### Bug Fixes
+
+* **settings:** validate max runs (1-1000) and trash days (1-90) with inline errors ([97bf27d](https://github.com/Shchebyvovk/huligan/commit/97bf27dcf04d9351816e630d24c4b6c23d5dc792))
+
 ## [1.28.1](https://github.com/Shchebyvovk/huligan/compare/v1.28.0...v1.28.1) (2026-07-01)
 
 
