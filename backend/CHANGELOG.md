@@ -1,3 +1,10 @@
+## [1.26.1](https://github.com/Shchebyvovk/huligan/compare/v1.26.0...v1.26.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* ramp-up now correctly spaces users in time, not slots ([6ca04b1](https://github.com/Shchebyvovk/huligan/commit/6ca04b12d26ce53550d67adcff0d4f2fbe8e611b))
+
 # [1.26.0](https://github.com/Shchebyvovk/huligan/compare/v1.25.0...v1.26.0) (2026-07-01)
 
 
