@@ -1,3 +1,10 @@
+# [1.23.0](https://github.com/Shchebyvovk/huligan/compare/v1.22.0...v1.23.0) (2026-07-01)
+
+
+### Features
+
+* show invite link in UI with copy button ([2d55528](https://github.com/Shchebyvovk/huligan/commit/2d5552887f86d10387fe05f355e356364157489c))
+
 # [1.22.0](https://github.com/Shchebyvovk/huligan/compare/v1.21.3...v1.22.0) (2026-07-01)
 
 
