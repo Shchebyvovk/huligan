@@ -1,3 +1,10 @@
+# [1.34.0](https://github.com/Shchebyvovk/huligan/compare/v1.33.3...v1.34.0) (2026-10-19)
+
+
+### Features
+
+* **permissions:** add viewer/admin/superadmin roles across the API and UI ([7b40e74](https://github.com/Shchebyvovk/huligan/commit/7b40e74ba9a30ba760ac094a85e2e6a5c2efd18a))
+
 ## [1.33.3](https://github.com/Shchebyvovk/huligan/compare/v1.33.2...v1.33.3) (2026-10-19)
 
 
