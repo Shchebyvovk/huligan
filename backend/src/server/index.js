@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import rateLimit from "@fastify/rate-limit";
+import helmet from "@fastify/helmet";
 import { validateSession } from "../auth/session.js";
 import { authRoutes } from "./routes/auth.js";
 import { runsRoutes } from "./routes/runs.js";
@@ -30,6 +31,15 @@ export function buildApp({ db, startRun, resolveHost }) {
   const origins = allowedOrigins();
 
   app.register(cookie);
+  // Не було жодних security-заголовків (X-Content-Type-Options,
+  // Strict-Transport-Security тощо) — усе покладалось лише на CORS/cookie.
+  // CSP вимкнений: цей бекенд ніколи не рендерить HTML (чистий JSON API,
+  // фронтенд — окремий деплой), дефолтний CSP лише додавав би шум.
+  // crossOriginResourcePolicy явно "cross-origin": дефолт helmet
+  // ("same-origin") блокував би саме ті легітимні крос-origin fetch'і з
+  // фронтенду (окремий Render-домен у проді), які ми щойно свідомо дозволили
+  // через CORS allowlist вище — без цього helmet сам створив би регресію.
+  app.register(helmet, { contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: "cross-origin" } });
   app.register(cors, {
     origin: (origin, cb) => {
       if (!origin || origins.includes(origin)) return cb(null, true);
