@@ -1,3 +1,10 @@
+## [1.33.3](https://github.com/Shchebyvovk/huligan/compare/v1.33.2...v1.33.3) (2026-10-19)
+
+
+### Bug Fixes
+
+* add security response headers via @fastify/helmet ([5421982](https://github.com/Shchebyvovk/huligan/commit/5421982461d15eef0e5c0efccc13d1095573990b))
+
 ## [1.33.2](https://github.com/Shchebyvovk/huligan/compare/v1.33.1...v1.33.2) (2026-10-19)
 
 
