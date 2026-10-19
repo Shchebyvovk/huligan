@@ -73,6 +73,21 @@ describe("POST /api/auth/logout", () => {
   });
 });
 
+describe("rate limiting", () => {
+  it("POST /auth/login -> 429 після перевищення ліміту (брутфорс-захист)", async () => {
+    const app = buildApp({ db: makeDb() });
+
+    let last;
+    for (let i = 0; i < 6; i++) {
+      last = await app.inject({
+        method: "POST", url: "/api/auth/login",
+        payload: { email: "admin@test.com", password: "wrong" },
+      });
+    }
+    expect(last.statusCode).toBe(429);
+  });
+});
+
 describe("захищені роути", () => {
   it("повертає 401 без сесії", async () => {
     const app = buildApp({ db: makeDb() });

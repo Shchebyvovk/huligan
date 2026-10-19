@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
+import rateLimit from "@fastify/rate-limit";
 import { validateSession } from "../auth/session.js";
 import { authRoutes } from "./routes/auth.js";
 import { runsRoutes } from "./routes/runs.js";
@@ -37,6 +38,12 @@ export function buildApp({ db, startRun, resolveHost }) {
     credentials: true,
     methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"],
   });
+  // Було відсутнє повністю (ні глобально, ні на жодному роуті) — /auth/login
+  // можна було брутфорсити без жодного обмеження, /admins/invite та
+  // /invite/:token заспамити. Генеральний ліміт — грубий захист від
+  // банального флуду всього API; чутливі роути нижче додатково звужують
+  // через per-route `config: { rateLimit }`.
+  app.register(rateLimit, { global: true, max: 300, timeWindow: "1 minute" });
 
   app.get("/health", async () => ({ ok: true }));
 
