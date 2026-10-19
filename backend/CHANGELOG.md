@@ -1,3 +1,10 @@
+## [1.33.2](https://github.com/Shchebyvovk/huligan/compare/v1.33.1...v1.33.2) (2026-10-19)
+
+
+### Bug Fixes
+
+* add rate limiting and hash session/invite tokens at rest ([bda6562](https://github.com/Shchebyvovk/huligan/commit/bda6562d2f1b1e967d3dd4e4795276e63eacd9dc))
+
 ## [1.33.1](https://github.com/Shchebyvovk/huligan/compare/v1.33.0...v1.33.1) (2026-10-19)
 
 
