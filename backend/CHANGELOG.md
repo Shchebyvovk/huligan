@@ -1,3 +1,10 @@
+## [1.33.1](https://github.com/Shchebyvovk/huligan/compare/v1.33.0...v1.33.1) (2026-10-19)
+
+
+### Bug Fixes
+
+* lock down CORS origin allowlist and validate load-test targetUrl ([8f6aca6](https://github.com/Shchebyvovk/huligan/commit/8f6aca6f0247bb8dd7bde0e23c0618cb20848f4a))
+
 # [1.33.0](https://github.com/Shchebyvovk/huligan/compare/v1.32.0...v1.33.0) (2026-07-01)
 
 
