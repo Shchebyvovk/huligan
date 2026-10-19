@@ -1,6 +1,8 @@
 import { runJob } from "../../orchestrator/runJob.js";
+import { validateTargetUrl } from "../../net/validateTargetUrl.js";
+import { MAX_CONCURRENCY } from "./limits.js";
 
-export async function runsRoutes(app, { db, startRun = runJob }) {
+export async function runsRoutes(app, { db, startRun = runJob, resolveHost }) {
   app.get("/runs", async (req, reply) => {
     const maxRuns = Math.min(Math.max(Number(req.query.maxRuns) || 100, 1), 1000);
     const trashDays = Math.min(Math.max(Number(req.query.trashDays) || 30, 1), 365);
@@ -23,8 +25,15 @@ export async function runsRoutes(app, { db, startRun = runJob }) {
     if (!scenario || concurrency == null || !targetUrl) {
       return reply.code(400).send({ message: "scenario, concurrency і targetUrl обов'язкові" });
     }
+    if (concurrency < 1 || concurrency > MAX_CONCURRENCY) {
+      return reply.code(400).send({ message: `concurrency має бути від 1 до ${MAX_CONCURRENCY}` });
+    }
     if (usersCount != null && usersCount > concurrency) {
       return reply.code(400).send({ message: "usersCount не може бути більшим за concurrency" });
+    }
+    const targetCheck = await validateTargetUrl(targetUrl, { resolveHost });
+    if (!targetCheck.ok) {
+      return reply.code(400).send({ message: targetCheck.reason });
     }
     const run = await db.createRun({ scenario, concurrency, targetUrl, usersCount: usersCount ?? null, rampUpMs: rampUpMs ?? 0 });
     reply.code(201).send(run);

@@ -41,6 +41,11 @@ const loginAndGetCookie = async (app) => {
   return res.headers["set-cookie"];
 };
 
+// targetUrl тепер перевіряється через validateTargetUrl (DNS-резолв хоста) —
+// resolveHost тут завжди повертає публічну IP, щоб тести не ходили в
+// реальну мережу (той самий DI-паттерн, що db-адаптер).
+const resolveHost = async () => ["93.184.216.34"];
+
 describe("GET /api/runs", () => {
   it("повертає список ранів", async () => {
     const app = buildApp({ db: makeDb(), startRun: async () => {} });
@@ -56,7 +61,7 @@ describe("GET /api/runs", () => {
 
 describe("POST /api/runs", () => {
   it("створює новий ран і повертає його", async () => {
-    const app = buildApp({ db: makeDb(), startRun: async () => {} });
+    const app = buildApp({ db: makeDb(), startRun: async () => {}, resolveHost });
     const cookie = await loginAndGetCookie(app);
 
     const res = await app.inject({
@@ -72,7 +77,7 @@ describe("POST /api/runs", () => {
   });
 
   it("повертає 400 якщо concurrency відсутній", async () => {
-    const app = buildApp({ db: makeDb(), startRun: async () => {} });
+    const app = buildApp({ db: makeDb(), startRun: async () => {}, resolveHost });
     const cookie = await loginAndGetCookie(app);
 
     const res = await app.inject({
@@ -84,13 +89,52 @@ describe("POST /api/runs", () => {
   });
 
   it("повертає 400 якщо targetUrl відсутній", async () => {
-    const app = buildApp({ db: makeDb(), startRun: async () => {} });
+    const app = buildApp({ db: makeDb(), startRun: async () => {}, resolveHost });
     const cookie = await loginAndGetCookie(app);
 
     const res = await app.inject({
       method: "POST", url: "/api/runs",
       headers: { cookie },
       payload: { scenario: "chat-flood", concurrency: 100 },
+    });
+    expect(res.statusCode).toBe(400);
+  });
+
+  it("повертає 400 якщо concurrency перевищує MAX_CONCURRENCY", async () => {
+    const app = buildApp({ db: makeDb(), startRun: async () => {}, resolveHost });
+    const cookie = await loginAndGetCookie(app);
+
+    const res = await app.inject({
+      method: "POST", url: "/api/runs",
+      headers: { cookie },
+      payload: { scenario: "chat-flood", concurrency: 999999, targetUrl: "https://target.example.com" },
+    });
+    expect(res.statusCode).toBe(400);
+  });
+
+  it("повертає 400 якщо targetUrl вказує на приватну/внутрішню адресу (SSRF)", async () => {
+    const app = buildApp({ db: makeDb(), startRun: async () => {} });
+    const cookie = await loginAndGetCookie(app);
+
+    const res = await app.inject({
+      method: "POST", url: "/api/runs",
+      headers: { cookie },
+      payload: { scenario: "chat-flood", concurrency: 10, targetUrl: "http://169.254.169.254/latest/meta-data/" },
+    });
+    expect(res.statusCode).toBe(400);
+  });
+
+  it("повертає 400 якщо хост targetUrl резолвиться у приватну адресу (DNS rebinding)", async () => {
+    const app = buildApp({
+      db: makeDb(), startRun: async () => {},
+      resolveHost: async () => ["10.0.0.5"],
+    });
+    const cookie = await loginAndGetCookie(app);
+
+    const res = await app.inject({
+      method: "POST", url: "/api/runs",
+      headers: { cookie },
+      payload: { scenario: "chat-flood", concurrency: 10, targetUrl: "https://sneaky.example.com" },
     });
     expect(res.statusCode).toBe(400);
   });
