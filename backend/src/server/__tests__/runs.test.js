@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { buildApp } from "../index.js";
 import { hashPassword } from "../../auth/hashPassword.js";
 
-const makeDb = () => {
+const makeDb = ({ role = "admin" } = {}) => {
   const sessions = {};
   const runs = [
     { id: 2, scenario: "chat-flood", concurrency: 100, status: "completed" },
@@ -11,8 +11,11 @@ const makeDb = () => {
   return {
     async findAdminByEmail(email) {
       return email === "admin@test.com"
-        ? { id: 1, password: await hashPassword("secret") }
+        ? { id: 1, password: await hashPassword("secret"), role }
         : null;
+    },
+    async findAdminById(id) {
+      return id === 1 ? { id: 1, email: "admin@test.com", role } : null;
     },
     async createSession({ token, userId, expiresAt }) { sessions[token] = { userId, expiresAt }; },
     async findSession(token) { return sessions[token] ?? null; },
@@ -56,6 +59,28 @@ describe("GET /api/runs", () => {
     expect(res.statusCode).toBe(200);
     expect(body).toHaveLength(2);
     expect(body[0].scenario).toBe("chat-flood");
+  });
+});
+
+describe("POST /api/runs — рольовий доступ", () => {
+  it("viewer отримує 403 (не може запускати тести, лише дивитись)", async () => {
+    const app = buildApp({ db: makeDb({ role: "viewer" }), startRun: async () => {}, resolveHost });
+    const cookie = await loginAndGetCookie(app);
+
+    const res = await app.inject({
+      method: "POST", url: "/api/runs",
+      headers: { cookie },
+      payload: { scenario: "chat-flood", concurrency: 10, targetUrl: "https://target.example.com" },
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("viewer все одно МОЖЕ дивитись список ранів (GET не гейтується роллю)", async () => {
+    const app = buildApp({ db: makeDb({ role: "viewer" }), startRun: async () => {} });
+    const cookie = await loginAndGetCookie(app);
+
+    const res = await app.inject({ method: "GET", url: "/api/runs", headers: { cookie } });
+    expect(res.statusCode).toBe(200);
   });
 });
 

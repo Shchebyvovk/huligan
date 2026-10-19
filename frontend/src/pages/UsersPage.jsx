@@ -3,6 +3,7 @@ import { api } from '../api'
 import { useT } from '../i18n'
 import AppHeader from '../components/AppHeader'
 import SettingsModal from '../components/SettingsModal'
+import { useCurrentAdmin } from '../hooks/useCurrentAdmin'
 
 function GeneratePanel({ onGenerated }) {
   const t = useT()
@@ -44,6 +45,7 @@ function GeneratePanel({ onGenerated }) {
 
 export default function UsersPage() {
   const t = useT()
+  const { isAdmin } = useCurrentAdmin()
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [users, setUsers] = useState([])
   const [total, setTotal] = useState(0)
@@ -93,7 +95,7 @@ export default function UsersPage() {
               {t('users_total', total)}
             </p>
           </div>
-          <GeneratePanel onGenerated={handleGenerated} />
+          {isAdmin && <GeneratePanel onGenerated={handleGenerated} />}
         </div>
 
         {/* Filters */}

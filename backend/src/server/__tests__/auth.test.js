@@ -7,7 +7,10 @@ const makeDb = ({ passwordOverride } = {}) => {
   return {
     async findAdminByEmail(email) {
       if (email !== "admin@test.com") return null;
-      return { id: 1, password: passwordOverride ?? await hashPassword("secret") };
+      return { id: 1, password: passwordOverride ?? await hashPassword("secret"), role: "admin" };
+    },
+    async findAdminById(id) {
+      return id === 1 ? { id: 1, email: "admin@test.com", role: "admin" } : null;
     },
     async createSession({ token, userId, expiresAt }) { sessions[token] = { userId, expiresAt }; },
     async findSession(token) { return sessions[token] ?? null; },

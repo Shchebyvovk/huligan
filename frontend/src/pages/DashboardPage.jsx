@@ -9,8 +9,10 @@ import CompareModal from '../components/CompareModal'
 import TrashModal from '../components/TrashModal'
 import ScheduledRunsModal from '../components/ScheduledRunsModal'
 import TrendChart from '../components/TrendChart'
+import { useCurrentAdmin } from '../hooks/useCurrentAdmin'
 
 export default function DashboardPage() {
+  const { isAdmin } = useCurrentAdmin()
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [newRunOpen, setNewRunOpen] = useState(false)
   const [trashOpen, setTrashOpen] = useState(false)
@@ -125,12 +127,14 @@ export default function DashboardPage() {
             >
               🗑
             </button>
-            <button
-              onClick={() => setNewRunOpen(true)}
-              className="bg-[var(--c-accent-bg)] hover:bg-[var(--c-accent-hover)] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors cursor-pointer"
-            >
-              {t('runs_new')}
-            </button>
+            {isAdmin && (
+              <button
+                onClick={() => setNewRunOpen(true)}
+                className="bg-[var(--c-accent-bg)] hover:bg-[var(--c-accent-hover)] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors cursor-pointer"
+              >
+                {t('runs_new')}
+              </button>
+            )}
           </div>
         </div>
 
@@ -172,7 +176,7 @@ export default function DashboardPage() {
               </button>
             )}
 
-            {deleteConfirm ? (
+            {isAdmin && (deleteConfirm ? (
               <>
                 <span className="text-sm text-[var(--c-text-2)]">{t('runs_delete_confirm', selCount)}</span>
                 <button onClick={handleDelete} className="text-sm text-red-400 hover:text-red-300 cursor-pointer font-medium">{t('trash_confirm_yes')}</button>
@@ -185,7 +189,7 @@ export default function DashboardPage() {
               >
                 {t('runs_delete')}
               </button>
-            )}
+            ))}
 
             <button
               onClick={() => { setSelected(new Set()); setDeleteConfirm(false) }}

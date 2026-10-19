@@ -38,8 +38,10 @@ export const api = {
   createScheduledRun: (data) => request('POST', '/api/scheduled', data).then(r => r?.json()),
   deleteScheduledRun: (id) => request('DELETE', `/api/scheduled/${id}`).then(r => r?.json()),
   toggleScheduledRun: (id, active) => request('PATCH', `/api/scheduled/${id}/toggle`, { active }).then(r => r?.json()),
+  getMe:          ()               => request('GET',  '/api/me').then(r => r?.json() ?? null),
   getAdmins:      ()               => request('GET',  '/api/admins').then(r => r?.json() ?? []),
-  inviteAdmin:    (email)          => request('POST', '/api/admins/invite', { email }),
+  inviteAdmin:    (email, role = 'admin') => request('POST', '/api/admins/invite', { email, role }),
+  updateAdminRole: (id, role)      => request('PATCH', `/api/admins/${id}/role`, { role }),
   getInvite:      (token)          => fetch(`${BASE}/api/invite/${token}`).then(r => r.ok ? r.json() : null),
   acceptInvite:   (token, password) => fetch(`${BASE}/api/invite/${token}`, {
     method: 'POST',

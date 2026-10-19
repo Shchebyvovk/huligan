@@ -1,4 +1,5 @@
 import { generateUsers } from '../../users/generateUsers.js'
+import { requireRole } from '../../permissions/requireRole.js'
 
 export async function usersRoutes(app, { db }) {
   app.get('/users', async (req, reply) => {
@@ -19,7 +20,7 @@ export async function usersRoutes(app, { db }) {
     reply.send(stats)
   })
 
-  app.post('/users/generate', async (req, reply) => {
+  app.post('/users/generate', { preHandler: requireRole('admin') }, async (req, reply) => {
     const { count } = req.body ?? {}
     if (!count || count < 1 || count > 10000) {
       return reply.code(400).send({ message: 'count має бути від 1 до 10000' })

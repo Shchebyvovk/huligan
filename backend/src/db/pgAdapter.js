@@ -2,8 +2,19 @@ export function createPgAdapter(pool) {
   return {
     async findAdminByEmail(email) {
       const { rows } = await pool.query(
-        "SELECT id, password FROM admin_users WHERE email = $1",
+        "SELECT id, password, role FROM admin_users WHERE email = $1",
         [email]
+      );
+      return rows[0] ?? null;
+    },
+
+    // Сесія несе лише userId (session.js) — роль читається тут при кожному
+    // захищеному запиті (index.js), не кешується в самому токені, тож зміна
+    // ролі адміну діє одразу на наступному запиті, без релогіну.
+    async findAdminById(id) {
+      const { rows } = await pool.query(
+        `SELECT id, email, role FROM admin_users WHERE id = $1`,
+        [id]
       );
       return rows[0] ?? null;
     },
@@ -184,30 +195,47 @@ export function createPgAdapter(pool) {
 
     async getAdmins() {
       const { rows } = await pool.query(
-        `SELECT id, email, created_at AS "createdAt" FROM admin_users ORDER BY created_at ASC`
+        `SELECT id, email, role, created_at AS "createdAt" FROM admin_users ORDER BY created_at ASC`
       );
       return rows;
     },
 
-    async createAdmin({ email, password }) {
+    async createAdmin({ email, password, role }) {
       const { rows } = await pool.query(
-        `INSERT INTO admin_users (email, password) VALUES ($1, $2)
-         RETURNING id, email, created_at AS "createdAt"`,
-        [email, password]
+        `INSERT INTO admin_users (email, password, role) VALUES ($1, $2, $3)
+         RETURNING id, email, role, created_at AS "createdAt"`,
+        [email, password, role]
       );
       return rows[0];
     },
 
-    async createInvite({ token, email, invitedBy, expiresAt }) {
+    // Останній superadmin не можна понизити/замінити на нижчу роль — інакше
+    // жодному адміну в системі більше не буде кому керувати ролями (self-lockout).
+    async countSuperadmins() {
+      const { rows } = await pool.query(
+        `SELECT COUNT(*)::int AS count FROM admin_users WHERE role = 'superadmin'`
+      );
+      return rows[0].count;
+    },
+
+    async updateAdminRole(id, role) {
+      const { rows } = await pool.query(
+        `UPDATE admin_users SET role = $2 WHERE id = $1 RETURNING id, email, role, created_at AS "createdAt"`,
+        [id, role]
+      );
+      return rows[0] ?? null;
+    },
+
+    async createInvite({ token, email, invitedBy, expiresAt, role }) {
       await pool.query(
-        `INSERT INTO admin_invites (token, email, invited_by, expires_at) VALUES ($1, $2, $3, $4)`,
-        [token, email, invitedBy, expiresAt]
+        `INSERT INTO admin_invites (token, email, invited_by, expires_at, role) VALUES ($1, $2, $3, $4, $5)`,
+        [token, email, invitedBy, expiresAt, role]
       );
     },
 
     async findInvite(token) {
       const { rows } = await pool.query(
-        `SELECT id, email, expires_at AS "expiresAt", used_at AS "usedAt"
+        `SELECT id, email, role, expires_at AS "expiresAt", used_at AS "usedAt"
          FROM admin_invites
          WHERE token = $1 AND used_at IS NULL AND expires_at > now()`,
         [token]

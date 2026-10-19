@@ -1,6 +1,7 @@
 import { runJob } from "../../orchestrator/runJob.js";
 import { validateTargetUrl } from "../../net/validateTargetUrl.js";
 import { MAX_CONCURRENCY } from "./limits.js";
+import { requireRole } from "../../permissions/requireRole.js";
 
 export async function runsRoutes(app, { db, startRun = runJob, resolveHost }) {
   app.get("/runs", async (req, reply) => {
@@ -20,7 +21,9 @@ export async function runsRoutes(app, { db, startRun = runJob, resolveHost }) {
     reply.send(run);
   });
 
-  app.post("/runs", async (req, reply) => {
+  // Запуск тесту = генерація реального трафіку на targetUrl — viewer не має
+  // цього робити, лише дивитись результати (GET-роути вище без requireRole).
+  app.post("/runs", { preHandler: requireRole("admin") }, async (req, reply) => {
     const { scenario, concurrency, targetUrl, usersCount, rampUpMs } = req.body ?? {};
     if (!scenario || concurrency == null || !targetUrl) {
       return reply.code(400).send({ message: "scenario, concurrency і targetUrl обов'язкові" });
@@ -40,7 +43,7 @@ export async function runsRoutes(app, { db, startRun = runJob, resolveHost }) {
     startRun({ run, db }).catch(err => app.log.error(err));
   });
 
-  app.post("/runs/delete", async (req, reply) => {
+  app.post("/runs/delete", { preHandler: requireRole("admin") }, async (req, reply) => {
     const { ids } = req.body ?? {};
     if (!Array.isArray(ids) || ids.length === 0)
       return reply.code(400).send({ message: "ids обов'язкові" });
@@ -48,7 +51,7 @@ export async function runsRoutes(app, { db, startRun = runJob, resolveHost }) {
     reply.send({ ok: true });
   });
 
-  app.post("/runs/restore", async (req, reply) => {
+  app.post("/runs/restore", { preHandler: requireRole("admin") }, async (req, reply) => {
     const { ids } = req.body ?? {};
     if (!Array.isArray(ids) || ids.length === 0)
       return reply.code(400).send({ message: "ids обов'язкові" });
@@ -56,7 +59,7 @@ export async function runsRoutes(app, { db, startRun = runJob, resolveHost }) {
     reply.send({ ok: true });
   });
 
-  app.delete("/runs/trash", async (req, reply) => {
+  app.delete("/runs/trash", { preHandler: requireRole("admin") }, async (req, reply) => {
     const { ids } = req.body ?? {};
     if (!Array.isArray(ids) || ids.length === 0)
       return reply.code(400).send({ message: "ids обов'язкові" });

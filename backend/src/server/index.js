@@ -61,14 +61,22 @@ export function buildApp({ db, startRun, resolveHost }) {
   app.register(authRoutes, { prefix: "/api", db });
   app.register(inviteRoutes, { prefix: "/api", db });
 
-  // захищені роути — preHandler перевіряє сесію
+  // захищені роути — preHandler перевіряє сесію + підвантажує поточну роль
+  // (req.role), яку далі конкретні роути гейтують через requireRole(min).
   app.register(async (instance) => {
     instance.addHook("preHandler", async (req, reply) => {
       const token = req.cookies?.session;
       const session = token ? await validateSession(token, db) : null;
       if (!session) return reply.code(401).send({ message: "Unauthorized" });
-      req.userId = session.userId;
+      // Адміна могли видалити/деактивувати між виданням сесії і цим запитом —
+      // той самий fail-closed підхід, що й staff.enabled у суміжних проєктах.
+      const admin = await db.findAdminById(session.userId);
+      if (!admin) return reply.code(401).send({ message: "Unauthorized" });
+      req.userId = admin.id;
+      req.role = admin.role;
     });
+
+    instance.get("/api/me", async (req) => ({ id: req.userId, role: req.role }));
 
     instance.register(runsRoutes, { prefix: "/api", db, startRun, resolveHost });
     instance.register(scenariosRoutes, { prefix: "/api", db });

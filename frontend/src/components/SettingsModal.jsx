@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react'
 import { useT, useLocale, AVAILABLE_LOCALES } from '../i18n'
 import { useTheme, AVAILABLE_THEMES } from '../theme'
 import { api } from '../api'
+import { useCurrentAdmin } from '../hooks/useCurrentAdmin'
+
+const ROLE_LABELS = { viewer: 'Viewer', admin: 'Admin', superadmin: 'Superadmin' }
 
 function Tab({ active, onClick, children }) {
   return (
@@ -190,17 +193,22 @@ function AppearanceTab({ onClose }) {
 }
 
 function AdminsTab() {
+  const { isSuperadmin } = useCurrentAdmin()
   const [admins, setAdmins] = useState([])
   const [email, setEmail] = useState('')
+  const [role, setRole] = useState('admin')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [inviteLink, setInviteLink] = useState('')
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState('')
+  const [roleError, setRoleError] = useState('')
 
-  useEffect(() => {
-    api.getAdmins().then(setAdmins).finally(() => setLoading(false))
-  }, [])
+  function reload() {
+    return api.getAdmins().then(setAdmins).finally(() => setLoading(false))
+  }
+
+  useEffect(() => { reload() }, [])
 
   async function handleInvite(e) {
     e.preventDefault()
@@ -208,7 +216,7 @@ function AdminsTab() {
     setError('')
     setInviteLink('')
     try {
-      const res = await api.inviteAdmin(email)
+      const res = await api.inviteAdmin(email, role)
       if (res && res.status === 201) {
         const data = await res.json()
         setInviteLink(data.link)
@@ -230,6 +238,21 @@ function AdminsTab() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  async function handleRoleChange(adminId, newRole) {
+    setRoleError('')
+    try {
+      const res = await api.updateAdminRole(adminId, newRole)
+      if (res && res.status === 200) {
+        await reload()
+      } else {
+        const data = res ? await res.json() : null
+        setRoleError(data?.message ?? 'Помилка зміни ролі')
+      }
+    } catch {
+      setRoleError('Помилка сервера')
+    }
+  }
+
   return (
     <div className="flex flex-col gap-5">
       {/* список адмінів */}
@@ -240,18 +263,38 @@ function AdminsTab() {
         ) : (
           <div className="flex flex-col gap-1">
             {admins.map(a => (
-              <div key={a.id} className="flex items-center justify-between bg-[var(--c-surface-2)] rounded-lg px-3 py-2">
-                <span className="text-sm text-[var(--c-text)] font-mono">{a.email}</span>
-                <span className="text-xs text-[var(--c-text-4)]">
-                  {new Date(a.createdAt).toLocaleDateString('uk-UA')}
-                </span>
+              <div key={a.id} className="flex items-center justify-between bg-[var(--c-surface-2)] rounded-lg px-3 py-2 gap-2">
+                <span className="text-sm text-[var(--c-text)] font-mono truncate">{a.email}</span>
+                <div className="flex items-center gap-2 shrink-0">
+                  {isSuperadmin ? (
+                    <select
+                      value={a.role}
+                      onChange={e => handleRoleChange(a.id, e.target.value)}
+                      className="bg-[var(--c-surface-3)] border border-[var(--c-border-input)] rounded-md px-2 py-1 text-xs text-[var(--c-text-2)] outline-none focus:border-[var(--c-accent-border)] transition-colors cursor-pointer"
+                    >
+                      {Object.keys(ROLE_LABELS).map(r => (
+                        <option key={r} value={r}>{ROLE_LABELS[r]}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <span className="text-xs bg-[var(--c-accent-faint)] text-[var(--c-accent)] px-2 py-0.5 rounded-full">
+                      {ROLE_LABELS[a.role] ?? a.role}
+                    </span>
+                  )}
+                  <span className="text-xs text-[var(--c-text-4)] whitespace-nowrap">
+                    {new Date(a.createdAt).toLocaleDateString('uk-UA')}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
         )}
+        {roleError && <p className="mt-2 text-xs text-red-400">{roleError}</p>}
       </div>
 
-      {/* форма запрошення */}
+      {/* форма запрошення — лише superadmin: додавання нового адміна саме по
+          собі ескалація привілеїв (separation of duties від "керувати тестами") */}
+      {isSuperadmin && (
       <div>
         <p className="text-xs text-[var(--c-text-3)] mb-2">Запросити нового адміна</p>
         <form onSubmit={handleInvite} className="flex gap-2">
@@ -263,6 +306,15 @@ function AdminsTab() {
             placeholder="email@example.com"
             className="flex-1 bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-3 py-2 text-sm text-[var(--c-text)] outline-none focus:border-[var(--c-accent-border)] transition-colors"
           />
+          <select
+            value={role}
+            onChange={e => setRole(e.target.value)}
+            className="bg-[var(--c-surface-2)] border border-[var(--c-border-input)] rounded-lg px-2 py-2 text-sm text-[var(--c-text)] outline-none focus:border-[var(--c-accent-border)] transition-colors cursor-pointer"
+          >
+            {Object.keys(ROLE_LABELS).map(r => (
+              <option key={r} value={r}>{ROLE_LABELS[r]}</option>
+            ))}
+          </select>
           <button
             type="submit"
             disabled={sending || !email}
@@ -292,12 +344,14 @@ function AdminsTab() {
           </div>
         )}
       </div>
+      )}
     </div>
   )
 }
 
 export default function SettingsModal({ onClose }) {
   const t = useT()
+  const { isAdmin } = useCurrentAdmin()
   const [tab, setTab] = useState('appearance')
 
   return (
@@ -315,11 +369,13 @@ export default function SettingsModal({ onClose }) {
 
         <div className="flex gap-1 mb-5">
           <Tab active={tab === 'appearance'} onClick={() => setTab('appearance')}>Вигляд</Tab>
-          <Tab active={tab === 'admins'} onClick={() => setTab('admins')}>Адміни</Tab>
+          {/* GET /admins сам вимагає admin+ на бекенді — viewer би отримав
+              лише 403, тож і вкладку йому не показуємо. */}
+          {isAdmin && <Tab active={tab === 'admins'} onClick={() => setTab('admins')}>Адміни</Tab>}
         </div>
 
         {tab === 'appearance' && <AppearanceTab onClose={onClose} />}
-        {tab === 'admins' && <AdminsTab />}
+        {tab === 'admins' && isAdmin && <AdminsTab />}
       </div>
     </div>
   )

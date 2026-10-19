@@ -1,5 +1,6 @@
 import { parseScenario } from "../../scenario/parseScenario.js";
 import { assertSafeName } from "../../scenario/safeName.js";
+import { requireRole } from "../../permissions/requireRole.js";
 
 export async function scenariosRoutes(app, { db }) {
   app.get("/scenarios", async (req, reply) => {
@@ -10,7 +11,7 @@ export async function scenariosRoutes(app, { db }) {
     ));
   });
 
-  app.post("/scenarios", async (req, reply) => {
+  app.post("/scenarios", { preHandler: requireRole("admin") }, async (req, reply) => {
     const { name, steps } = req.body ?? {};
     if (!name || !steps) {
       return reply.code(400).send({ message: "name і steps обов'язкові" });
@@ -28,7 +29,7 @@ export async function scenariosRoutes(app, { db }) {
     }
   });
 
-  app.delete("/scenarios/:name", async (req, reply) => {
+  app.delete("/scenarios/:name", { preHandler: requireRole("admin") }, async (req, reply) => {
     try {
       assertSafeName(req.params.name);
       const deleted = await db.deleteScenarioByName(req.params.name);

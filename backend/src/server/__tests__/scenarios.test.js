@@ -2,13 +2,16 @@ import { describe, it, expect } from "vitest";
 import { buildApp } from "../index.js";
 import { hashPassword } from "../../auth/hashPassword.js";
 
-const makeDb = () => {
+const makeDb = ({ role = "admin" } = {}) => {
   const sessions = {};
   const scenarios = {};
 
   return {
     async findAdminByEmail(email) {
-      return email === "admin@test.com" ? { id: 1, password: await hashPassword("secret") } : null;
+      return email === "admin@test.com" ? { id: 1, password: await hashPassword("secret"), role } : null;
+    },
+    async findAdminById(id) {
+      return id === 1 ? { id: 1, email: "admin@test.com", role } : null;
     },
     async createSession({ token, userId, expiresAt }) { sessions[token] = { userId, expiresAt }; },
     async findSession(token) { return sessions[token] ?? null; },
@@ -79,6 +82,19 @@ describe("POST /api/scenarios", () => {
       payload: { name: "bad", steps: [{ action: "hack" }] },
     });
     expect(res.statusCode).toBe(400);
+  });
+
+  it("viewer отримує 403 (не може керувати сценаріями)", async () => {
+    const db = makeDb({ role: "viewer" });
+    const app = buildApp({ db, startRun: async () => {} });
+    const cookie = await loginAndGetCookie(app);
+
+    const res = await app.inject({
+      method: "POST", url: "/api/scenarios",
+      headers: { cookie },
+      payload: { name: "login-loop", steps: [{ action: "logout" }] },
+    });
+    expect(res.statusCode).toBe(403);
   });
 });
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api'
+import { useCurrentAdmin } from '../hooks/useCurrentAdmin'
 
 const INTERVAL_OPTIONS = [
   { label: '15 хв',  ms: 900000 },
@@ -16,6 +17,7 @@ function formatDate(iso) {
 }
 
 export default function ScheduledRunsModal({ onClose }) {
+  const { isAdmin } = useCurrentAdmin()
   const [scenarios, setScenarios] = useState([])
   const [runs, setRuns] = useState([])
   const [scenarioName, setScenarioName] = useState('')
@@ -79,7 +81,8 @@ export default function ScheduledRunsModal({ onClose }) {
           <button onClick={onClose} className="text-[var(--c-text-4)] hover:text-[var(--c-text)] text-xl leading-none cursor-pointer">×</button>
         </div>
 
-        {/* Create form */}
+        {/* Create form — лише admin+: планує реальний (можливо повторюваний) трафік */}
+        {isAdmin && (
         <form onSubmit={handleSubmit} className="flex flex-col gap-3 mb-6">
           <div className="flex flex-col gap-1">
             <label className="text-xs text-[var(--c-text-3)]">Сценарій</label>
@@ -170,6 +173,7 @@ export default function ScheduledRunsModal({ onClose }) {
             {loading ? 'Збереження...' : 'Запланувати'}
           </button>
         </form>
+        )}
 
         {/* List */}
         {runs.length === 0 ? (
@@ -200,22 +204,24 @@ export default function ScheduledRunsModal({ onClose }) {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-1 shrink-0">
-                  <button
-                    onClick={() => handleToggle(r)}
-                    className="text-[var(--c-text-4)] hover:text-[var(--c-text)] text-base leading-none cursor-pointer px-1"
-                    title={r.active ? 'Призупинити' : 'Відновити'}
-                  >
-                    {r.active ? '⏸' : '▶'}
-                  </button>
-                  <button
-                    onClick={() => handleDelete(r.id)}
-                    className="text-[var(--c-text-4)] hover:text-red-400 text-lg leading-none cursor-pointer px-1"
-                    title="Видалити"
-                  >
-                    ×
-                  </button>
-                </div>
+                {isAdmin && (
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => handleToggle(r)}
+                      className="text-[var(--c-text-4)] hover:text-[var(--c-text)] text-base leading-none cursor-pointer px-1"
+                      title={r.active ? 'Призупинити' : 'Відновити'}
+                    >
+                      {r.active ? '⏸' : '▶'}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(r.id)}
+                      className="text-[var(--c-text-4)] hover:text-red-400 text-lg leading-none cursor-pointer px-1"
+                      title="Видалити"
+                    >
+                      ×
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>

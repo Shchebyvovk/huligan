@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import { api } from '../api'
 import { useT, useLocale } from '../i18n'
 import { getTrashDays } from './SettingsModal'
+import { useCurrentAdmin } from '../hooks/useCurrentAdmin'
 
 export default function TrashModal({ onClose, onRestored }) {
   const t = useT()
   const { locale } = useLocale()
+  const { isAdmin } = useCurrentAdmin()
   const [runs, setRuns] = useState([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState(new Set())
@@ -98,7 +100,7 @@ export default function TrashModal({ onClose, onRestored }) {
           })}
         </div>
 
-        {runs.length > 0 && (
+        {runs.length > 0 && isAdmin && (
           <div className="px-6 py-4 border-t border-[var(--c-border)] shrink-0">
             {confirm ? (
               <div className="flex items-center gap-3">

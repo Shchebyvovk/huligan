@@ -24,6 +24,41 @@ describe("findAdminByEmail", () => {
   });
 });
 
+describe("findAdminById", () => {
+  it("повертає id/email/role з admin_users", async () => {
+    const pool = makePool([{ id: 1, email: "a@test.com", role: "admin" }]);
+    const db = createPgAdapter(pool);
+    const result = await db.findAdminById(1);
+    expect(pool.query).toHaveBeenCalledWith(expect.stringContaining("admin_users"), [1]);
+    expect(result).toEqual({ id: 1, email: "a@test.com", role: "admin" });
+  });
+
+  it("повертає null якщо адміна немає", async () => {
+    const pool = makePool([]);
+    const db = createPgAdapter(pool);
+    expect(await db.findAdminById(999)).toBeNull();
+  });
+});
+
+describe("countSuperadmins", () => {
+  it("повертає кількість адмінів з роллю superadmin", async () => {
+    const pool = makePool([{ count: 2 }]);
+    const db = createPgAdapter(pool);
+    expect(await db.countSuperadmins()).toBe(2);
+    expect(pool.query).toHaveBeenCalledWith(expect.stringContaining("superadmin"));
+  });
+});
+
+describe("updateAdminRole", () => {
+  it("оновлює роль і повертає оновлений рядок", async () => {
+    const pool = makePool([{ id: 2, email: "b@test.com", role: "viewer", createdAt: new Date() }]);
+    const db = createPgAdapter(pool);
+    const result = await db.updateAdminRole(2, "viewer");
+    expect(pool.query).toHaveBeenCalledWith(expect.stringContaining("UPDATE admin_users"), [2, "viewer"]);
+    expect(result.role).toBe("viewer");
+  });
+});
+
 describe("createSession", () => {
   it("вставляє рядок у sessions", async () => {
     const pool = makePool([]);
